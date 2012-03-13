@@ -10,6 +10,7 @@ Originally written as a project for Engineering 177, Advanced Matlab Programming
 
 ## B) Usage
 Please check the example:
+
 ```
 $ cd Source
 $ inheritanceexample
