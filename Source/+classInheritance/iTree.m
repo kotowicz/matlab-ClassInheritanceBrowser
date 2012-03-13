@@ -224,13 +224,17 @@ classdef iTree < handle
                 % faster implementation
                 Names = cellfun(@(x) obj.format(x.Name), obj.metalist{i}.Properties, 'UniformOutput', false);
                 DefiningClasses = cellfun(@(x) obj.format(x.DefiningClass.Name), obj.metalist{i}.Properties, 'UniformOutput', false);
+                GetAccess = cellfun(@(x) obj.format(x.GetAccess), obj.metalist{i}.Properties, 'UniformOutput', false);
+                SetAccess = cellfun(@(x) obj.format(x.SetAccess), obj.metalist{i}.Properties, 'UniformOutput', false);
 
                 % preallocate cell of structs
                 % don't use DefiningClass.Name - this is slow.
-                s{i}.Properties = repmat({struct('Name', [], 'DefiningClassName', [])}, 1, length(obj.metalist{i}.Properties));
+                s{i}.Properties = repmat({struct('Name', [], 'DefiningClassName', [], 'GetAccess', [], 'SetAccess', [])}, 1, length(obj.metalist{i}.Properties));
                 for j=1:length(obj.metalist{i}.Properties)
                     s{i}.Properties{j}.Name = Names{j};
                     s{i}.Properties{j}.DefiningClassName = DefiningClasses{j};
+                    s{i}.Properties{j}.GetAccess = GetAccess{j};
+                    s{i}.Properties{j}.SetAccess = SetAccess{j};
                 end
 
                 % sort properties by name
@@ -240,13 +244,21 @@ classdef iTree < handle
                 % do not use a for-loop here, cellfun is way faster.
                 Names = cellfun(@(x) obj.format(x.Name), obj.metalist{i}.Methods, 'UniformOutput', false);
                 DefiningClasses = cellfun(@(x) obj.format(x.DefiningClass.Name), obj.metalist{i}.Methods, 'UniformOutput', false);
+                Access = cellfun(@(x) obj.format(x.Access), obj.metalist{i}.Methods, 'UniformOutput', false);
+                Abstract = cellfun(@(x) obj.format(x.Abstract), obj.metalist{i}.Methods, 'UniformOutput', false);
+                Sealed = cellfun(@(x) obj.format(x.Sealed), obj.metalist{i}.Methods, 'UniformOutput', false);
+                Hidden = cellfun(@(x) obj.format(x.Hidden), obj.metalist{i}.Methods, 'UniformOutput', false);
 
                 % preallocate cell of structs
                 % don't use DefiningClass.Name - this is slow.
-                s{i}.Methods = repmat({struct('Name', [], 'DefiningClassName', [])}, 1, length(obj.metalist{i}.Methods));
+                s{i}.Methods = repmat({struct('Name', [], 'DefiningClassName', [], 'Access', [], 'Abstract', [], 'Sealed', [], 'Hidden', [])}, 1, length(obj.metalist{i}.Methods));
                 for j=1:length(obj.metalist{i}.Methods)
                     s{i}.Methods{j}.Name = Names{j};
                     s{i}.Methods{j}.DefiningClassName = DefiningClasses{j};
+                    s{i}.Methods{j}.Access = Access{j};
+                    s{i}.Methods{j}.Abstract = Abstract{j};
+                    s{i}.Methods{j}.Sealed = Sealed{j};
+                    s{i}.Methods{j}.Hidden = Hidden{j};
                 end
 
                 % sort methods by name
@@ -306,6 +318,9 @@ classdef iTree < handle
             if (numNodes == 1)
                 CN = 1;
                 ID = nodeList{1}.myInfo;
+                if ischar(ID)
+                    ID = {ID};
+                end                
             else
                 CN = zeros(numNodes);
                 ID = cell(1,numNodes);

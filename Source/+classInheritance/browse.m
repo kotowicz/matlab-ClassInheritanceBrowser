@@ -62,6 +62,20 @@ classdef browse < handle
             delete(obj.guiHan.f)
         end
         
+        function KeyPressFcn_browse(src, evnt, obj) %#ok<MANU>
+            try % maybe not all kpfs are committed.
+                switch evnt.Key
+                    
+                    case 'm'
+                        [name, value] = get_selected_class_name(obj);
+                        ak.create_metauml(obj.metadata{value});
+                    otherwise
+                        
+                end
+            catch me %#ok<NASGU> % no error message - just ignore the error
+            end
+        end
+        
         function LOCALbrowseCb(src, evnt, obj) %#ok<INUSL,MANU>
             % allow user to browse to different directory
             start_path = get(obj.guiHan.dirH, 'String');
@@ -130,12 +144,15 @@ classdef browse < handle
                 return;
             end
             
-            class_name_and_method = [selected_class '/' selected_method];
-            [result, which_file] = classInheritance.browse.resolvePath(class_name_and_method);
-            [pathstr, name] = fileparts(which_file); %#ok<ASGLU>
+            dd = filesep();
+            class_name_and_method = [selected_class dd selected_method];
+            class_name_and_method_private = [selected_class dd 'private' dd selected_method];
+            [result, which_file] = classInheritance.browse.resolvePath(class_name_and_method, class_name_and_method_private);
+
             
             % found a file.
             if result == 1
+                [pathstr, name] = fileparts(which_file); %#ok<ASGLU>
                 % method is in a separate file - no need to look up the
                 % line number
                 if strcmp(name, selected_method)
@@ -474,6 +491,7 @@ classdef browse < handle
 
             % assign Callbacks and other functions
             set(obj.guiHan.f,'CloseRequestFcn',{@closefunc obj})
+            set(obj.guiHan.f,'KeyPressFcn',{@KeyPressFcn_browse obj})
             set(obj.guiHan.classH, 'Callback',{@LOCALlistCb obj});
             set(obj.guiHan.searchH, 'KeyPressFcn',{@LOCALsearchCb obj});
             set(obj.guiHan.dirH,'KeyPressFcn',{@LOCALdirCb obj},'Interruptible','off');
@@ -531,7 +549,7 @@ classdef browse < handle
     
     %% STATIC methods
     methods (Static = true)
-        function [result, absPathname] = resolvePath(class_and_method)
+        function [result, absPathname] = resolvePath(class_and_method, class_and_method_private)
             % returns the absolute path for a class/method combination
             % "which(class_and_method)" will fail here most of the time.
             
@@ -540,7 +558,12 @@ classdef browse < handle
             result = 0;
             absPathname = [];
             
-            [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method, '', true, false); %#ok<ASGLU>
+            [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method, '', true, false);
+            % try again possible 'private' path
+            if isempty(classInfo)
+                [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method_private, '', true, false); %#ok<ASGLU>
+            end
+            
             if exist(whichTopic, 'file') == 2
                 result = 1;
                 absPathname = whichTopic;
