@@ -213,22 +213,25 @@ classdef browse < handle
                     obj.trees.view();
                 end
                 
-                nodes = get(obj.trees.h.Nodes);
-                oldind = [];
-                for j=1:length(nodes)
-                    if isequal(2,nodes(j).LineWidth)
-                        oldind = j;
+                % 'trees.h' might be empty, if only one class is given.
+                if ~isempty(obj.trees.h)
+                    nodes = get(obj.trees.h.Nodes);
+                    oldind = [];
+                    for j=1:length(nodes)
+                        if isequal(2,nodes(j).LineWidth)
+                            oldind = j;
+                        end
                     end
+                    if ~isempty(oldind)
+                        set(obj.trees.h.Nodes(oldind),'LineWidth',1)
+                        set(obj.trees.h.Nodes(oldind),'LineColor',[.3 .3 1])
+                    end
+                    nodename = cell(1,length(nodes));
+                    for i=1:length(nodes); nodename{i} = nodes(i).ID; end
+                    newind = strcmp(name,nodename);
+                    set(obj.trees.h.Nodes(newind),'LineWidth',2)
+                    set(obj.trees.h.Nodes(newind),'LineColor',[1 0 0])
                 end
-                if ~isempty(oldind)
-                    set(obj.trees.h.Nodes(oldind),'LineWidth',1)
-                    set(obj.trees.h.Nodes(oldind),'LineColor',[.3 .3 1])
-                end
-                nodename = cell(1,length(nodes));
-                for i=1:length(nodes); nodename{i} = nodes(i).ID; end
-                newind = strcmp(name,nodename);
-                set(obj.trees.h.Nodes(newind),'LineWidth',2)
-                set(obj.trees.h.Nodes(newind),'LineColor',[1 0 0])
             end
             
             displayinfo(obj,value,name);

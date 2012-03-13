@@ -343,11 +343,16 @@ classdef iTree < handle
                     ID{i} = strrep(ID{i},'DOT','.');
                 end
             end
-            bgobj = biograph(CN,ID);
-            set(0,'ShowHiddenHandles','on')
-            obj.h = view(bgobj);
-            obj.fighan = gcf;
-            set(0,'ShowHiddenHandles','off')
+            
+            % the call to 'biograph' might fail since the API might change.
+            try
+                bgobj = biograph(CN,ID);
+                set(0,'ShowHiddenHandles','on')
+                obj.h = view(bgobj);
+                obj.fighan = gcf;
+                set(0,'ShowHiddenHandles','off')
+            catch %#ok<CTCH>
+            end
         end
         
         %%
