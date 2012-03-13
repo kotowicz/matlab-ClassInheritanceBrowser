@@ -12,5 +12,6 @@
 % the included documentation.
 
 clear classes;
-
+% add current directory to path.
+addpath(pwd);
 h = classInheritance.browse('+inex');
