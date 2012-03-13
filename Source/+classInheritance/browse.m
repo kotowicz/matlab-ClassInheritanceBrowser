@@ -21,13 +21,18 @@ classdef browse < handle
                 inputdir = '.';
             end
             
-            % check if bioinfo toolbox exists
-            a = ver('bioinfo');
-            
-            % check also if network license is available
-            b = license('checkout','bioinformatics_toolbox');
-            if numel(a) > 0 && b == 1
-                obj.bioinfo_toolbox = 1;
+            % bioinformatics toolbox checks
+            try
+                % check if bioinfo toolbox exists
+                a = ver('bioinfo');
+                
+                % check also if network license is available
+                b = license('checkout','bioinformatics_toolbox');
+                if numel(a) > 0 && b == 1
+                    obj.bioinfo_toolbox = 1;
+                end
+            catch %#ok<CTCH>
+                obj.bioinfo_toolbox = 0;
             end
             
             % initalize data fields
