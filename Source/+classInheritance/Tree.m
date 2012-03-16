@@ -1,7 +1,7 @@
 classdef Tree < handle
     % Tree implementation
         
-    % Copyright 2010 Andrew Hagen, Eric Lee, and Clayton Ernst.
+    % Copyright 2012 Clayton Ernst, Andrew Hagen, Eric Lee and Andreas Kotowicz
     % Written for Engineering 177 Spring 2010, Final Project. Professor:
     % Andy Packard, UC Berkeley.
     
@@ -126,9 +126,4 @@ classdef Tree < handle
     end    
 end
 
-% Class Inheritance Browser Copyright Clayton Ernst, Andrew Hagen, and Eric Lee, 2010. 
-% This work is licensed under the Creative Commons Attribution 3.0 Unported
-% License. To view a copy of this license, visit
-% http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative
-% Commons, 543 Howard Street, 5th Floor, San Francisco, California, 94105,
-% USA.
+% Class Inheritance Browser Copyright Clayton Ernst, Andrew Hagen, Eric Lee and Andreas Kotowicz 2012. 
