@@ -6,12 +6,13 @@ classdef browse < handle
     % Andy Packard, UC Berkeley.
     
     properties (Access = private)
-        trees        
+        trees
         metadata
         liststr
         indx
         guiHan
         bioinfo_toolbox = 0;
+        NODIRSTRING = 'No dir found. Go up.';
     end
     
     %% PUBLIC methods
@@ -63,7 +64,9 @@ classdef browse < handle
         end
         
         function closefunc(src,evt,obj) %#ok<INUSL,MANU>
-            close(findobj('name',['Class Inheritance tree for ',obj.trees.directory]))
+            if ~isempty(obj.trees) && ~isempty(obj.trees.directory)
+                close(findobj('name',['Class Inheritance tree for ', obj.trees.directory]))
+            end
             delete(obj.guiHan.f)
         end
         
@@ -85,7 +88,11 @@ classdef browse < handle
             % allow user to browse to different directory
             start_path = get(obj.guiHan.dirH, 'String');
             dialog_title = 'Please select new directory';
-            folder_name = uigetdir(start_path,dialog_title);
+            try
+                folder_name = uigetdir(start_path,dialog_title);
+            catch  %#ok<CTCH>
+                folder_name = uigetdir('', dialog_title);
+            end
             set(obj.guiHan.dirH, 'String', folder_name);
         end
         
@@ -107,13 +114,33 @@ classdef browse < handle
                 return;
             end
             
-            drawnow;
-            inputdir = get(obj.guiHan.dirH,'string');
+            drawnow();
+            inputdir = get(obj.guiHan.dirH, 'String');
             if isempty(inputdir)
                 inputdir = '.';
             end
             
-            close(findobj('name',['Class Inheritance tree for ',obj.trees.directory]))
+            if ~isempty(obj.trees) && ~isempty(obj.trees.directory)
+                close(findobj('name', ['Class Inheritance tree for ', obj.trees.directory]));                
+            end
+            
+            a = dir(inputdir);
+            a([a.isdir] == 0) = [];
+            a(strcmp({a.name}, '.')) = [];
+            a(strcmp({a.name}, '..')) = [];
+            nbr_entries = numel(a);
+            if nbr_entries > 0
+                entries = cell(1, nbr_entries + 1);
+                for j = 1 : nbr_entries
+                    entries{1, j+1} = a(j).name;
+                end
+                entries{1, 1} = 'Go up';
+                
+                set(obj.guiHan.directoryList, 'String', entries);
+                
+            else
+                set(obj.guiHan.directoryList, 'String', obj.NODIRSTRING, 'Value', 1);
+            end
             
             % initalize data fields
             ok = init_data(obj, inputdir);
@@ -178,6 +205,42 @@ classdef browse < handle
                 opentoline(which_file, line_number);
             end
         end
+        
+        function LOOCALpropLb(src, evt, obj)
+            
+            % find out what item user clicked on
+            selected_entry = get(src, 'Value');
+            subdirs = get(src, 'String');
+            curr_dir = get(obj.guiHan.dirH, 'String');
+            
+            new_dir_selected = false;
+            
+            % check whether user wants to navigate up to parent level.
+            if selected_entry == 1 && ((~iscell(subdirs) && strcmp(subdirs, obj.NODIRSTRING) == 1) || (strcmp(subdirs{1}, 'Go up'))  )
+                % disp('gotta ignore this.');
+                [parent, this_dir] = fileparts(curr_dir);
+                if strcmp(parent, this_dir)
+                    return;
+                else
+                    new_dir_selected = true;
+                    new_dir = parent;
+                end
+            end
+            
+            % new directory wasn't selected, so let's build it here.
+            if new_dir_selected == false
+                new_dir = [curr_dir filesep() subdirs{selected_entry}];
+            end
+            
+            % set the new path.
+            set(obj.guiHan.dirH, 'String', new_dir);
+           
+            % run the 'Go' callback, fake the 'return' key being pressed.
+            evt.Key = 'return';
+            LOCALdirCb(src, evt, obj);
+
+        end
+        
         
         function LOCALpropCb(src, evt, obj) %#ok<MANU,INUSL>
             % prints help text of currently selected property to console
@@ -420,7 +483,7 @@ classdef browse < handle
             catch me
                 switch me.identifier
                     case 'classInheritance:iTreeClassNOTFOUND'
-                        disp('Error: Class not found. Please check if class name is correct or try again using full path to class.');
+                        disp('Error: No class found. If if you think this is a mistake, please check if class name is correct or try again using full path to class.');
                     otherwise
                         disp('unkown error:');
                         disp(me.message);
@@ -452,14 +515,26 @@ classdef browse < handle
         
         function setup_gui(obj)
             % builds the GUI
-            obj.guiHan.f = figure('Position',[10 100 655 470],'menubar','none','name','Class Information');
+            left = 10;
+            bottom = 100;
+            width = 855;
+            height = 470;
+            obj.guiHan.f = figure('Position',[left bottom width height],'menubar','none','name','Class Information');
             searchBox = uipanel('Title','Search','units','pixel','BackgroundColor','white','Position',[10 420 315 40]);
             dirBox = uipanel('Title','Directory','units','pixel','BackgroundColor','white','Position',[330 420 315 40]);
             infoBox = uipanel('Title','Class Information','units','pixel','BackgroundColor','white','Position',[10 10 642 400]);
             
             obj.guiHan.searchH = uicontrol('style','edit','position',[5 5 200 20],'parent',searchBox);
-            obj.guiHan.dirH = uicontrol('style','edit','position',[5 5 200 20],'parent',dirBox,'string',obj.trees.directory);
+            obj.guiHan.dirH = uicontrol('style','edit','position',[5 5 200 20],'parent',dirBox,'string',obj.trees.fullpath);
             obj.guiHan.searchButtonH = uicontrol('style','pushbutton' ,'position',[210 5 100 20],'string','Search','parent',searchBox);
+            
+            % list box for quickly browsing through subdirectories.
+            list_box_width = 200; 
+            obj.guiHan.directoryList = uicontrol('style', 'listbox', ...
+                'position', [width-list_box_width 0 list_box_width height], ...
+                'string', obj.NODIRSTRING, 'Parent', obj.guiHan.f, ...
+                'Callback', {@LOOCALpropLb obj}, ...
+                'TooltipString', 'Browse through directories by clicking on them.');
             
             obj.guiHan.dirsearchButtonH = uicontrol('style', 'pushbutton', ...
                 'position', [210 5 45 20], 'string', 'Go', ...

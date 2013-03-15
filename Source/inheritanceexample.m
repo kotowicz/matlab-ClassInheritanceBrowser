@@ -11,7 +11,7 @@
 % For further instructions on how to use the class inheritance browser, see
 % the included documentation.
 
-clear classes;
+%clear classes;
 % add current directory to path.
 addpath(pwd);
 h = classInheritance.browse('+inex');

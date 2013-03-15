@@ -30,6 +30,7 @@ classdef iTree < handle
     
     properties (SetAccess = private)
         directory
+        fullpath % fullpath to the class / directory.
         metalist = {}
         treelist
         rootIdx = [];
@@ -62,7 +63,10 @@ classdef iTree < handle
         function [wh, pre, dir0] = find_class_directory(obj)
             % get directory (or package) info
             wh = what(obj.directory);
-            if numel(wh) == 0
+            nbr_dirs = numel(wh);
+            
+            if nbr_dirs == 0
+                
                 % try harder to find object that user wants to see
                 this_plugin = which(obj.directory);
                 if isempty(this_plugin)  % let's give up
@@ -72,6 +76,10 @@ classdef iTree < handle
                 dir_to_open = fileparts(this_plugin);
                 obj.directory = dir_to_open;
                 wh = what(dir_to_open);
+                
+            elseif nbr_dirs > 1
+                disp('More than one directory found, will use first one.');
+                wh = wh(1);
             end
 
             % add the current directory to the matlab path
@@ -97,6 +105,8 @@ classdef iTree < handle
             % change to appropriate directory
             % cd(moddir); % gives me sometimes an error.
             cd(wh.path);
+            % save the fullpath to the class / directory
+            obj.fullpath = wh.path;
         end
         
         %% FIND classes in directory
