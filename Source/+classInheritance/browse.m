@@ -22,18 +22,29 @@ classdef browse < handle
                 inputdir = '.';
             end
             
-            % bioinformatics toolbox checks
+            % bioinformatics toolbox checks.
             try
-                % check if bioinfo toolbox exists
+                % Check if bioinfo toolbox exists
                 a = ver('bioinfo');
                 
-                % check also if network license is available
-                b = license('checkout','bioinformatics_toolbox');
+                % Check also if network license is available.
+                % Need to return "errormessage", otherwise user sees an
+                % ugly "License checkout failed." error message.
+                % 
+                try % matlab >= 2011a: `[TF, errmsg] = license('checkout',feature)`
+                    [b, errormessage] = license('checkout', 'bioinformatics_toolbox'); %#ok<NASGU>
+                catch me %#ok<NASGU> % matlab <= 2010b: `result = license('checkout',feature)`
+                    b = license('checkout', 'bioinformatics_toolbox');
+                end
                 if numel(a) > 0 && b == 1
                     obj.bioinfo_toolbox = 1;
                 end
-            catch %#ok<CTCH>
+            catch me %#ok<NASGU>
                 obj.bioinfo_toolbox = 0;
+            end
+            
+            if obj.bioinfo_toolbox == 0
+                disp('Bioinformatics Toolbox not found.');
             end
             
             % initalize data fields
