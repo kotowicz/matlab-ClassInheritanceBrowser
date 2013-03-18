@@ -641,10 +641,29 @@ classdef browse < handle
             result = 0;
             absPathname = [];
             
-            [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method, '', true, false);
-            % try again possible 'private' path
+            % "helpUtils.splitClassInformation" needs to be called
+            % differently for the different Matlab version. I'm using try /
+            % catch here which seems easier than checking for the 
+            % appropriate matlab version.
+            %
+            % Call to 'splitClassInformation' with matlab <= 2012b:
+            % [classInfo, whichTopic, malformed] = splitClassInformation(topic, helpPath, implementor, justChecking)
+            % Call to 'splitClassInformation' with matlab == 2013a:
+            % function [classInfo, whichTopic, malformed] = splitClassInformation(topic, helpPath, justChecking)            
+            %
+            try % works with matlab versions <= 2012b
+                [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method, '', true, false);
+            catch me %#ok<NASGU> matlab == 2013a (and matlab >= 2013a?)
+                [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method, '', false);
+            end
+            
+            % try again with possible 'private' path
             if isempty(classInfo)
-                [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method_private, '', true, false); %#ok<ASGLU>
+                try % works with matlab versions <= 2012b
+                    [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method_private, '', true, false); %#ok<ASGLU>
+                catch me %#ok<NASGU> matlab == 2013a (and matlab >= 2013a?)
+                    [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method_private, '', false); %#ok<ASGLU>
+                end
             end
             
             if exist(whichTopic, 'file') == 2
