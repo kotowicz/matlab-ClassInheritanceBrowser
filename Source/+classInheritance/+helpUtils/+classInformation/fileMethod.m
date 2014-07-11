@@ -1,10 +1,10 @@
-classdef fileMethod < helpUtils.classInformation.method
+classdef fileMethod < classInheritance.helpUtils.classInformation.method
     methods
         function ci = fileMethod(classWrapper, className, basePath, derivedPath, methodName, packageName)
             fileName = [methodName '.m'];
             definition = fullfile(basePath, fileName);
             whichTopic = fullfile(derivedPath, fileName);
-            ci@helpUtils.classInformation.method(classWrapper, packageName, className, methodName, definition, whichTopic, whichTopic);
+            ci@classInheritance.helpUtils.classInformation.method(classWrapper, packageName, className, methodName, definition, whichTopic, whichTopic);
         end
 
         function insertClassName(ci)
@@ -13,17 +13,17 @@ classdef fileMethod < helpUtils.classInformation.method
         
         function setAccessible(ci)
             try
-                packagedName = helpUtils.makePackagedName(ci.packageName, ci.className);
+                packagedName = classInheritance.helpUtils.makePackagedName(ci.packageName, ci.className);
                 metaClass = meta.class.fromName(packagedName);
                 if isempty(metaClass)
                     ci.isAccessible = true;
                 else
-                    classMethod = helpUtils.getMethod(metaClass, ci.element);
+                    classMethod = classInheritance.helpUtils.getMethod(metaClass, ci.element);
                     ci.setStatic(classMethod.Static);
                     if metaClass.Hidden
                         ci.isAccessible = false;
                     else
-                        ci.isAccessible = helpUtils.isAccessible(classMethod, 'methods');
+                        ci.isAccessible = classInheritance.helpUtils.isAccessible(classMethod, 'methods');
                     end
                 end
             catch e %#ok<NASGU>
@@ -39,7 +39,7 @@ classdef fileMethod < helpUtils.classInformation.method
             ci.definition = regexprep(ci.definition, '@(?<className>\w++)[\\/](?<methodName>\w*)(\.[mp])?$', ['@$<className>/$<className>' filemarker '$<methodName>']);
             [helpText, needsHotlinking] = ci.helpfunc(hotLinkCommand);
             if isempty(helpText)
-                [helpText, needsHotlinking] = ci.getSecondaryHelp@helpUtils.classInformation.method(hotLinkCommand);
+                [helpText, needsHotlinking] = ci.getSecondaryHelp@classInheritance.helpUtils.classInformation.method(hotLinkCommand);
             end            
         end
     end

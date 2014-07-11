@@ -1,18 +1,18 @@
-classdef packagedUnknown < helpUtils.classInformation.packagedItem
+classdef packagedUnknown < classInheritance.helpUtils.classInformation.packagedItem
     properties
         helpFunction = '';
     end
     
     methods
         function ci = packagedUnknown(packageName, packagePath, itemName, itemFullName, helpFunction)
-            ci@helpUtils.classInformation.packagedItem(packageName, packagePath, itemName, itemFullName);
+            ci@classInheritance.helpUtils.classInformation.packagedItem(packageName, packagePath, itemName, itemFullName);
             ci.helpFunction = helpFunction;
         end
     end
     
     methods (Access=protected)
         function [helpText, needsHotlinking] = helpfunc(ci, hotLinkCommand) %#ok<INUSD>
-            helpText = helpUtils.callHelpFunction(ci.helpFunction, ci.whichTopic);
+            helpText = classInheritance.helpUtils.callHelpFunction(ci.helpFunction, ci.whichTopic);
             needsHotlinking = true;
         end
     end

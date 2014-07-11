@@ -57,7 +57,7 @@ classdef helpProcess < handle
             end
             
             % enable the directory hashtable
-            helpUtils.hashedDirInfo(true);
+            classInheritance.helpUtils.hashedDirInfo(true);
         end
 
         getHelpText(hp);
@@ -65,7 +65,7 @@ classdef helpProcess < handle
 
         function delete(hp)
             % disable the directory hashtable
-            helpUtils.hashedDirInfo(false);
+            classInheritance.helpUtils.hashedDirInfo(false);
 
             hp.displayHelp;
         end

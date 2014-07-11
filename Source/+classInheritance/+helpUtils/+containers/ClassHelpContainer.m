@@ -1,14 +1,14 @@
-classdef ClassHelpContainer < helpUtils.containers.abstractHelpContainer
+classdef ClassHelpContainer < classInheritance.helpUtils.containers.abstractHelpContainer
     % CLASSHELPCONTAINER - stores help and class information related to a
     % MATLAB Object System class
     %
     % Remark:
     % Creation of this object should be made by the static 'create' method
-    % of helpUtils.containers.HelpContainerFactory class.
+    % of classInheritance.helpUtils.containers.HelpContainerFactory class.
     %
     % Example:
     % filePath = which('RandStream');
-    % helpContainer = helpUtils.containers.HelpContainerFactory.create(filePath);
+    % helpContainer = classInheritance.helpUtils.containers.HelpContainerFactory.create(filePath);
     %
     % The code above constructs a ClassHelpContainer object.
     
@@ -57,20 +57,20 @@ classdef ClassHelpContainer < helpUtils.containers.abstractHelpContainer
             % outside the classdef M-file.
             
             mFileName = classMetaData.Name;
-            ci = helpUtils.splitClassInformation(mFileName, '');
+            ci = classInheritance.helpUtils.splitClassInformation(mFileName, '');
             
             helpStr = ci.getHelp;
             
             if ~onlyLocalHelp
-                helpStr = helpUtils.containers.extractH1Line(helpStr);
+                helpStr = classInheritance.helpUtils.containers.extractH1Line(helpStr);
             end
             
-            mainHelpContainer = helpUtils.containers.ClassMemberHelpContainer(...
+            mainHelpContainer = classInheritance.helpUtils.containers.ClassMemberHelpContainer(...
                 'classHelp', helpStr, classMetaData, ~onlyLocalHelp);
             
-            this = this@helpUtils.containers.abstractHelpContainer(mFileName, filePath, mainHelpContainer);
+            this = this@classInheritance.helpUtils.containers.abstractHelpContainer(mFileName, filePath, mainHelpContainer);
             
-            this.minimalPath = helpUtils.minimizePath(filePath, false);
+            this.minimalPath = classInheritance.helpUtils.minimizePath(filePath, false);
 
             this.classInfo = ci;
             
@@ -83,25 +83,25 @@ classdef ClassHelpContainer < helpUtils.containers.abstractHelpContainer
         %% ---------------------------------
         function elementIterator = getSimpleElementIterator(this, elementKeyword)
             % GETSIMPLEELEMENTITERATOR - returns iterator for simple help objects
-            elementIterator = helpUtils.containers.ClassMemberIterator(this.SimpleElementHelpContainers.(elementKeyword));
+            elementIterator = classInheritance.helpUtils.containers.ClassMemberIterator(this.SimpleElementHelpContainers.(elementKeyword));
         end
                 
         %% ---------------------------------
         function methodIterator = getMethodIterator(this)
             % GETMETHODITERATOR - returns iterator for method help objects
-            methodIterator = helpUtils.containers.ClassMemberIterator(this.StructMethodHelpContainers, this.StructAbstractHelpContainers);
+            methodIterator = classInheritance.helpUtils.containers.ClassMemberIterator(this.StructMethodHelpContainers, this.StructAbstractHelpContainers);
         end
 
         %% ---------------------------------
         function methodIterator = getConcreteMethodIterator(this)
             % GETCONCRETEMETHODITERATOR - returns iterator for non-abstract method help objects
-            methodIterator = helpUtils.containers.ClassMemberIterator(this.StructMethodHelpContainers);
+            methodIterator = classInheritance.helpUtils.containers.ClassMemberIterator(this.StructMethodHelpContainers);
         end
 
         %% ---------------------------------
         function methodIterator = getAbstractMethodIterator(this)
             % GETABSTRACTMETHODITERATOR - returns iterator for abstract method help objects
-            methodIterator = helpUtils.containers.ClassMemberIterator(this.StructAbstractHelpContainers);
+            methodIterator = classInheritance.helpUtils.containers.ClassMemberIterator(this.StructAbstractHelpContainers);
         end
 
         %% ---------------------------------
@@ -114,7 +114,7 @@ classdef ClassHelpContainer < helpUtils.containers.abstractHelpContainer
                 constructorStruct.(this.classInfo.className) = constructorHelpContainer;
             end
 
-            constructorIterator = helpUtils.containers.ClassMemberIterator(constructorStruct);
+            constructorIterator = classInheritance.helpUtils.containers.ClassMemberIterator(constructorStruct);
         end
         %% ---------------------------------
         function conHelp = getConstructorHelpContainer(this)
@@ -152,10 +152,10 @@ classdef ClassHelpContainer < helpUtils.containers.abstractHelpContainer
             % - Main class
             % - Constructor
             % - All properties and methods
-            result = hasNoHelp@helpUtils.containers.abstractHelpContainer(this);
+            result = hasNoHelp@classInheritance.helpUtils.containers.abstractHelpContainer(this);
             result = result && this.ConstructorHelpContainer.hasNoHelp;
             result = result && hasNoMemberHelp(this.getMethodIterator);
-            for elementType = helpUtils.getSimpleElementTypes            
+            for elementType = classInheritance.helpUtils.getSimpleElementTypes            
                 result = result && hasNoMemberHelp(this.getSimpleElementIterator(elementType.keyword));
             end
         end
@@ -175,7 +175,7 @@ classdef ClassHelpContainer < helpUtils.containers.abstractHelpContainer
             % SimpleElementHelpContainers to store all the
             % ClassMemberHelpContainer objects for simple elements that meet the
             % requirements as specified in the
-            % helpUtils.containers.HelpContainerFactory help comments.
+            % classInheritance.helpUtils.containers.HelpContainerFactory help comments.
             
             this.buildSimpleElementHelpContainer(this.mainHelpContainer.metaData.PropertyList, 'properties', this.onlyLocalHelp);
             this.buildSimpleElementHelpContainer(this.mainHelpContainer.metaData.EventList, 'events', this.onlyLocalHelp);
@@ -204,7 +204,7 @@ classdef ClassHelpContainer < helpUtils.containers.abstractHelpContainer
             %    ClassMemberHelpContainer object for the constructor.
             %
             % Remark:
-            % Refer to helpUtils.XMLUtil.HelpContainerFactory help for details on
+            % Refer to classInheritance.helpUtils.XMLUtil.HelpContainerFactory help for details on
             % requirements for methods that give rise to
             % ClassMemberHelpContainer objects.
             
@@ -257,7 +257,7 @@ classdef ClassHelpContainer < helpUtils.containers.abstractHelpContainer
                 memberName = memberMeta.Name;
 
                 classMemberStruct.(memberName) = ...
-                    helpUtils.containers.ClassMemberHelpContainer(memberKeyword, ...
+                    classInheritance.helpUtils.containers.ClassMemberHelpContainer(memberKeyword, ...
                     memberHelp, memberMeta, ~this.onlyLocalHelp);
             end
         end
@@ -270,11 +270,11 @@ classdef ClassHelpContainer < helpUtils.containers.abstractHelpContainer
                 constructorMeta = constructorMeta(1);
                 constructorHelp = this.getMemberHelp('constructor', constructorMeta);
                 this.ConstructorHelpContainer = ...
-                    helpUtils.containers.ClassMemberHelpContainer('constructor', ...
+                    classInheritance.helpUtils.containers.ClassMemberHelpContainer('constructor', ...
                     constructorHelp, constructorMeta, ~this.onlyLocalHelp);
             else
                 % create empty ClassMemberHelpContainer array
-                this.ConstructorHelpContainer = helpUtils.containers.ClassMemberHelpContainer;
+                this.ConstructorHelpContainer = classInheritance.helpUtils.containers.ClassMemberHelpContainer;
                 this.ConstructorHelpContainer(end) = [];
             end
         end
@@ -322,7 +322,7 @@ function metaData = cullMetaData(metaData, elementKeyword)
     % CULLMETADATA - filters out members that are private:
     
     metaData = metaData';
-    metaData(arrayfun(@(c)~helpUtils.isAccessible(c, elementKeyword), metaData)) = [];
+    metaData(arrayfun(@(c)~classInheritance.helpUtils.isAccessible(c, elementKeyword), metaData)) = [];
     [~, uniqueIndices] = unique({metaData.Name});
     metaData = metaData(uniqueIndices);
 end

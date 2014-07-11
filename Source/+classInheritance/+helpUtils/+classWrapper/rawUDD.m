@@ -1,4 +1,4 @@
-classdef rawUDD < helpUtils.classWrapper.UDD & helpUtils.classWrapper.raw
+classdef rawUDD < classInheritance.helpUtils.classWrapper.UDD & classInheritance.helpUtils.classWrapper.raw
     methods
         function cw = rawUDD(className, packagePath, packageHandle, isUnspecifiedConstructor)
             cw.isUnspecifiedConstructor = isUnspecifiedConstructor;
@@ -15,7 +15,7 @@ classdef rawUDD < helpUtils.classWrapper.UDD & helpUtils.classWrapper.raw
         end
 
         function classInfo = getConstructor(cw, ~)
-            classInfo = helpUtils.classInformation.fullConstructor(cw, cw.packageName, cw.className, cw.subClassPath, false, cw.isUnspecifiedConstructor, true);
+            classInfo = classInheritance.helpUtils.classInformation.fullConstructor(cw, cw.packageName, cw.className, cw.subClassPath, false, cw.isUnspecifiedConstructor, true);
         end
     end
     
@@ -27,7 +27,7 @@ classdef rawUDD < helpUtils.classWrapper.UDD & helpUtils.classWrapper.raw
             if any(methodIndex)
                 elementName = classMethods{methodIndex};
                 if justChecking
-                    classInfo = helpUtils.classInformation.fileMethod(cw, cw.className, cw.subClassPath, cw.subClassPath, elementName, cw.subClassPackageName);
+                    classInfo = classInheritance.helpUtils.classInformation.fileMethod(cw, cw.className, cw.subClassPath, cw.subClassPath, elementName, cw.subClassPackageName);
                 else
                     classInfo = cw.getSuperElement(elementName);
                     if ~isempty(classInfo)
@@ -39,7 +39,7 @@ classdef rawUDD < helpUtils.classWrapper.UDD & helpUtils.classWrapper.raw
                     if strcmpi(classProperty.Name, elementName)
                         if strcmp(classProperty.Visible, 'on')
                             if strcmp(classProperty.AccessFlags.PublicSet, 'on') || strcmp(classProperty.AccessFlags.PublicGet, 'on')
-                                classInfo = helpUtils.classInformation.propertyUDD(cw, cw.subClassPath, classProperty.Name, cw.subClassPackageName);
+                                classInfo = classInheritance.helpUtils.classInformation.propertyUDD(cw, cw.subClassPath, classProperty.Name, cw.subClassPackageName);
                                 return;
                             end
                         end

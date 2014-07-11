@@ -3,7 +3,7 @@ function getDocTopic(hp)
         [path, name] = hp.getPathItem;
 
         if ~isempty(path)
-            hp.docTopic = helpUtils.getDocTopic(path, name, false);
+            hp.docTopic = classInheritance.helpUtils.getDocTopic(path, name, false);
         end
     end
 end

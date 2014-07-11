@@ -4,7 +4,7 @@ function [qualifyingPath, pathItem] = getPathItem(hp)
         hp.isContents = strcmp(pathItem, 'Contents') && strcmp(ext, '.m');
         if hp.isContents
             hp.isDir = true;
-            pathItem = helpUtils.minimizePath(qualifyingPath, true);
+            pathItem = classInheritance.helpUtils.minimizePath(qualifyingPath, true);
         end
     end
 end

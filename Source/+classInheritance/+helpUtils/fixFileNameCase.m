@@ -7,7 +7,7 @@ function [fileName, qualifyingPath, fullPath, hasMFileForHelp, alternateHelpFunc
         fullPath = whichTopic;
         fname = regexprep(fname, '\.p$', '');
     else
-        fullPath = helpUtils.safeWhich(fname);
+        fullPath = classInheritance.helpUtils.safeWhich(fname);
     end
     if isempty(fullPath)
         return;
@@ -23,7 +23,7 @@ function [fileName, qualifyingPath, fullPath, hasMFileForHelp, alternateHelpFunc
                 if strcmpi(name, entryName)
                     startPos = strfind(pathEntry, helpPath);
                     if ~isempty(startPos)
-                        qualifyingPath = fileparts(helpUtils.minimizePath(pathEntry(startPos(1)+1:end), false));
+                        qualifyingPath = fileparts(classInheritance.helpUtils.minimizePath(pathEntry(startPos(1)+1:end), false));
                         fullPath = pathEntry;
                         break;
                     end
@@ -31,11 +31,11 @@ function [fileName, qualifyingPath, fullPath, hasMFileForHelp, alternateHelpFunc
             end
         end
     end
-    fileName = helpUtils.extractCaseCorrectedName(fullPath, fname);
+    fileName = classInheritance.helpUtils.extractCaseCorrectedName(fullPath, fname);
     [~, ~, targetExtension] = fileparts(fullPath);
     hasMFileForHelp = ~isempty(regexpi(targetExtension, '^\.[mp]$', 'once'));
     if nargout > 4 && ~hasMFileForHelp
-        alternateHelpFunction = helpUtils.getHelpFunction(targetExtension);
+        alternateHelpFunction = classInheritance.helpUtils.getHelpFunction(targetExtension);
         if isempty(alternateHelpFunction)
             fullPath = '';
         end

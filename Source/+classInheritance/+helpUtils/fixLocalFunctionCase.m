@@ -11,9 +11,9 @@ function [fname, hasLocalFunction, shouldLink, qualifyingPath, fullPath] = fixLo
     split = regexp(fname, filemarker, 'split', 'once');
     if length(split) > 1
         hasLocalFunction = true;
-        [fileName, qualifyingPath, fullPath, hasMFileForHelp] = helpUtils.fixFileNameCase(split{1}, helpPath);
+        [fileName, qualifyingPath, fullPath, hasMFileForHelp] = classInheritance.helpUtils.fixFileNameCase(split{1}, helpPath);
         if ~hasMFileForHelp
-            [~, fullPath] = helpUtils.splitClassInformation(fileName, helpPath, false);
+            [~, fullPath] = classInheritance.helpUtils.splitClassInformation(fileName, helpPath, false);
             hasMFileForHelp = exist(fullPath, 'file') == 2;
         end
         if hasMFileForHelp
@@ -31,7 +31,7 @@ function [fname, hasLocalFunction, shouldLink, qualifyingPath, fullPath] = fixLo
                     end
                 end
             end
-            if ~shouldLink && helpUtils.isClassMFile(fullPath)
+            if ~shouldLink && classInheritance.helpUtils.isClassMFile(fullPath)
                 fname = [fileName, filesep, split{2}];
                 hasLocalFunction = false;
             end

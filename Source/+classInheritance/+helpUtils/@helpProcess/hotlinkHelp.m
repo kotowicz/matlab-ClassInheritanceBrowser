@@ -24,10 +24,10 @@ function hotlinkHelp(hp)
         elseif strcmp(getFinalObjectEntity(pathName), fcnName);
             % @ dir Class
             inClass = true;
-            packageName = helpUtils.getPackageName(fileparts(pathName));
+            packageName = classInheritance.helpUtils.getPackageName(fileparts(pathName));
             className = fcnName;
         elseif ~isempty(fcnName);
-            packageName = helpUtils.getPackageName(pathName);
+            packageName = classInheritance.helpUtils.getPackageName(pathName);
             if hp.isMCOSClass
                 inClass = true;
                 className = fcnName;
@@ -63,13 +63,13 @@ function hotlinkHelp(hp)
     hp.helpStr = [helpPieces{:}];
 
     if hp.commandIsHelp
-        hp.helpStr = helpUtils.highlightHelp(hp.helpStr, hp.objectSystemName, fcnName, '<strong>', '</strong>');
+        hp.helpStr = classInheritance.helpUtils.highlightHelp(hp.helpStr, hp.objectSystemName, fcnName, '<strong>', '</strong>');
     end
 end
 
 %% ------------------------------------------------------------------------
 function helpStr = linkSeeAlsos(hp, helpStr, pathName, fcnName, inClass)
-    helpParts = helpUtils.helpParts(helpStr);
+    helpParts = classInheritance.helpUtils.helpParts(helpStr);
     seeAlsoPart = helpParts.getPart('seeAlso');
     if ~isempty(seeAlsoPart)
         % Parse the "See Also" portion of help output to isolate function names.
@@ -109,10 +109,10 @@ function helpStr = linkMethods(hp, helpStr, packageName, className, pathName)
     if ~isempty(packageName)
         packageName = [packageName '.'];
     end
-    methodsPattern = regexptranslate('escape', getString(message('MATLAB:helpUtils:helpProcess:Methods', className)));
-    methodsPattern = [methodsPattern '|' getString(message('MATLAB:helpUtils:helpProcess:MethodsEnglish', className))];
-    propertiesPattern = regexptranslate('escape', getString(message('MATLAB:helpUtils:helpProcess:Properties', className)));
-    propertiesPattern = [propertiesPattern '|' getString(message('MATLAB:helpUtils:helpProcess:PropertiesEnglish', className))];
+    methodsPattern = regexptranslate('escape', getString(message('MATLAB:classInheritance.helpUtils.helpProcess:Methods', className)));
+    methodsPattern = [methodsPattern '|' getString(message('MATLAB:classInheritance.helpUtils.helpProcess:MethodsEnglish', className))];
+    propertiesPattern = regexptranslate('escape', getString(message('MATLAB:classInheritance.helpUtils.helpProcess:Properties', className)));
+    propertiesPattern = [propertiesPattern '|' getString(message('MATLAB:classInheritance.helpUtils.helpProcess:PropertiesEnglish', className))];
     methodsOrProperties = regexprep([methodsPattern '|' propertiesPattern], '\s+', '\\s+');
     methodsStart = regexpi(helpStr, ['^\s*(' packageName ')?(?:' methodsOrProperties '):\s*$'], 'lineanchors', 'once');
     
@@ -172,10 +172,10 @@ function linkText = makeHyperlink(hp, word, pathName, fcnName, inContents, inCla
     if inContents || ~strcmp(word,'and')
         [shouldLink, fname, qualifyingPath, whichTopic] = isHyperlinkable(word, pathName);
         if shouldLink
-            linkWord = helpUtils.extractCaseCorrectedName(fname, word);
+            linkWord = classInheritance.helpUtils.extractCaseCorrectedName(fname, word);
             if isempty(linkWord)
                 % word is overqualified
-                [overqualifiedPath, linkWord] = helpUtils.splitOverqualification(fname, word, whichTopic);
+                [overqualifiedPath, linkWord] = classInheritance.helpUtils.splitOverqualification(fname, word, whichTopic);
                 linkWord = [overqualifiedPath, linkWord];
             elseif ~isempty(qualifyingPath)
                 % word is underqualified
@@ -189,7 +189,7 @@ end
 
 %% ------------------------------------------------------------------------
 function linkText = createMatlabLink(command, linkTarget, linkText)
-    linkText = ['<a href="matlab:' helpUtils.makeDualCommand(command, linkTarget) '">' linkText '</a>'];
+    linkText = ['<a href="matlab:' classInheritance.helpUtils.makeDualCommand(command, linkTarget) '">' linkText '</a>'];
 end
 
 %% ------------------------------------------------------------------------
@@ -197,7 +197,7 @@ function [shouldLink, fname, qualifyingPath, whichTopic] = isHyperlinkable(fname
     whichTopic = '';
     
     % Make sure the function exists before hyperlinking it.
-    [fname, hasLocalFunction, shouldLink, qualifyingPath] = helpUtils.fixLocalFunctionCase(fname, helpPath);
+    [fname, hasLocalFunction, shouldLink, qualifyingPath] = classInheritance.helpUtils.fixLocalFunctionCase(fname, helpPath);
     if hasLocalFunction
         return;
     end
@@ -205,9 +205,9 @@ function [shouldLink, fname, qualifyingPath, whichTopic] = isHyperlinkable(fname
     [fname, shouldLink, qualifyingPath, whichTopic] = isHyperlinkableMethod(fname, helpPath);
     if ~shouldLink
         % Check for directories on the path
-        dirInfo = helpUtils.hashedDirInfo(fname);
+        dirInfo = classInheritance.helpUtils.hashedDirInfo(fname);
         if ~isempty(dirInfo)
-            fname = helpUtils.extractCaseCorrectedName(dirInfo(1).path, fname);
+            fname = classInheritance.helpUtils.extractCaseCorrectedName(dirInfo(1).path, fname);
             if exist(fname, 'file') == 7
                 shouldLink = true;
                 return;
@@ -215,7 +215,7 @@ function [shouldLink, fname, qualifyingPath, whichTopic] = isHyperlinkable(fname
         end
         
         % Check for files on the path
-        [fname, qualifyingPath, ~, hasMFileForHelp, alternateHelpFunction] = helpUtils.fixFileNameCase(fname, helpPath, whichTopic);
+        [fname, qualifyingPath, ~, hasMFileForHelp, alternateHelpFunction] = classInheritance.helpUtils.fixFileNameCase(fname, helpPath, whichTopic);
         shouldLink = hasMFileForHelp || ~isempty(alternateHelpFunction);
     end
 end
@@ -224,7 +224,7 @@ end
 function [fname, shouldLink, qualifyingPath, whichTopic] = isHyperlinkableMethod(fname, helpPath)
     shouldLink = false;
     qualifyingPath = '';
-    [classInfo, whichTopic] = helpUtils.splitClassInformation(fname, helpPath);
+    [classInfo, whichTopic] = classInheritance.helpUtils.splitClassInformation(fname, helpPath);
     if ~isempty(classInfo)
         shouldLink = true;
         % qualifyingPath includes the object dirs, so remove them

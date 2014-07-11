@@ -4,7 +4,7 @@ function outputMFilePath = exportToMFile(this, outputDir)
     %
     % Example:
     % filePath = which('addpath');
-    % helpContainer = helpUtils.XMLUtils.HelpContainer.create(filePath);
+    % helpContainer = classInheritance.helpUtils.XMLUtils.HelpContainer.create(filePath);
     % outputDir = pwd;
     % outputMFilePath = helpContainer.exportToMFile(outputDir);
     
@@ -120,7 +120,7 @@ function writeClassMembers(helpContainer, outputFileHandle)
     
     fprintf(outputFileHandle, [strIndent 'end\n']);
 
-    for elementType = helpUtils.getSimpleElementTypes            
+    for elementType = classInheritance.helpUtils.getSimpleElementTypes            
         printSimpleElementHelp(outputFileHandle, strIndent, elementType.keyword, helpContainer);
     end
     

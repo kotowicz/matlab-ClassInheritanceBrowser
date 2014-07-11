@@ -8,7 +8,7 @@ classdef helpParts < handle
     
     % Copyright 2009 The MathWorks, Inc.
     properties (Access=private)
-        allParts = []; % array of helpUtils.atomicHelpParts
+        allParts = []; % array of classInheritance.helpUtils.atomicHelpParts
     end
     
     properties (GetAccess = private, Constant)
@@ -27,27 +27,27 @@ classdef helpParts < handle
             %Constructor takes help comments and extracts specific parts
             
             if ~ischar(fullHelpText)
-                error(message('MATLAB:helpUtils:helpParts:InvalidInput'));
+                error(message('MATLAB:classInheritance.helpUtils.helpParts:InvalidInput'));
             end
             
-            this.allParts = helpUtils.atomicHelpPart('', fullHelpText, helpUtils.helpParts.Raw);
+            this.allParts = classInheritance.helpUtils.atomicHelpPart('', fullHelpText, classInheritance.helpUtils.helpParts.Raw);
             
             % First look for the see also section.
-            found = this.addHelpPart('MATLAB:helpUtils:helpParts:SeeAlso', 'MATLAB:helpUtils:helpParts:SeeAlsoEnglish');
+            found = this.addHelpPart('MATLAB:classInheritance.helpUtils.helpParts:SeeAlso', 'MATLAB:classInheritance.helpUtils.helpParts:SeeAlsoEnglish');
             
             % Only look for a note if there is a see also!
             if found
-                this.addHelpPart('MATLAB:helpUtils:helpParts:Note', 'MATLAB:helpUtils:helpParts:NoteEnglish');
+                this.addHelpPart('MATLAB:classInheritance.helpUtils.helpParts:Note', 'MATLAB:classInheritance.helpUtils.helpParts:NoteEnglish');
             end
             
             % Add overloaded methods help part (if any)
             overloadPattern = getString(message('MATLAB:help:OverloadedMethods'));
-            overloadEnum = getString(message('MATLAB:helpUtils:helpParts:OverloadedMethodsEnglish'));
+            overloadEnum = getString(message('MATLAB:classInheritance.helpUtils.helpParts:OverloadedMethodsEnglish'));
             this.searchAndAppendHelpPart(overloadPattern, overloadEnum);
             
             % Add demo help part (if any).
-            demoPattern = getString(message('MATLAB:helpUtils:displayHelp:PublishedOutputInTheHelpBrowser'));
-            demoEnum = getString(message('MATLAB:helpUtils:helpParts:PublishedOutputEnglish'));
+            demoPattern = getString(message('MATLAB:classInheritance.helpUtils.displayHelp:PublishedOutputInTheHelpBrowser'));
+            demoEnum = getString(message('MATLAB:classInheritance.helpUtils.helpParts:PublishedOutputEnglish'));
             this.searchAndAppendHelpPart(demoPattern, demoEnum);
 
             % Extract examples (if any)
@@ -67,10 +67,10 @@ classdef helpParts < handle
             % GETPART - retrieves specific help part if found in MATLAB file
             enumType = getEnumeration(partName);
             
-            if enumType ~= helpUtils.helpParts.Invalid
+            if enumType ~= classInheritance.helpUtils.helpParts.Invalid
                 atomicHelpPart = this.allParts([this.allParts.enumType] == enumType);
             else
-                atomicHelpPart = helpUtils.atomicHelpPart;
+                atomicHelpPart = classInheritance.helpUtils.atomicHelpPart;
                 atomicHelpPart(end) = [];
             end
         end
@@ -105,7 +105,7 @@ classdef helpParts < handle
                 if isempty(whiteLine)
                     rawRemainderHelpPart = [];
                 else
-                    rawRemainderHelpPart = helpUtils.atomicHelpPart('',  parts{3}(whiteLine:end), helpUtils.helpParts.Raw);
+                    rawRemainderHelpPart = classInheritance.helpUtils.atomicHelpPart('',  parts{3}(whiteLine:end), classInheritance.helpUtils.helpParts.Raw);
                     parts{3} = parts{3}(1:whiteLine-1);
                 end
                 
@@ -116,7 +116,7 @@ classdef helpParts < handle
                     enumType = getEnumeration(titlePattern);
                 end
                 
-                newAtomicHelpPart = helpUtils.atomicHelpPart(parts{2}, parts{3}, enumType);
+                newAtomicHelpPart = classInheritance.helpUtils.atomicHelpPart(parts{2}, parts{3}, enumType);
                 
                 this.allParts(end).replaceText(parts{1});
                 this.allParts = [this.allParts, newAtomicHelpPart, rawRemainderHelpPart];
@@ -135,18 +135,18 @@ classdef helpParts < handle
                 'names', 'lineanchors', 'dotexceptnewline', 'split');
             
             if ~isempty(examples)
-                newParts(length(examples)*2) = helpUtils.atomicHelpPart;
+                newParts(length(examples)*2) = classInheritance.helpUtils.atomicHelpPart;
                 
                 for i = 1:length(examples)
                     % Need to concatenate spaces preceding the example header.
                     rawWithIndent = [raw{i} examples(i).indent];
                     
-                    newParts(2*i-1) = helpUtils.atomicHelpPart('', rawWithIndent, helpUtils.helpParts.Raw);
+                    newParts(2*i-1) = classInheritance.helpUtils.atomicHelpPart('', rawWithIndent, classInheritance.helpUtils.helpParts.Raw);
                     
-                    newParts(2*i) = helpUtils.atomicHelpPart(examples(i).header, examples(i).body, helpUtils.helpParts.Example);
+                    newParts(2*i) = classInheritance.helpUtils.atomicHelpPart(examples(i).header, examples(i).body, classInheritance.helpUtils.helpParts.Example);
                 end
                 
-                lastRawPart = helpUtils.atomicHelpPart('', raw{end}, helpUtils.helpParts.Raw);
+                lastRawPart = classInheritance.helpUtils.atomicHelpPart('', raw{end}, classInheritance.helpUtils.helpParts.Raw);
                 
                 this.allParts = [newParts, lastRawPart, this.allParts(2:end)];
             end
@@ -160,19 +160,19 @@ function enumType = getEnumeration(partName)
     % GETENUMERATION - returns enumeration corresponding to input part name
     switch lower(partName)
     case {'seealso', 'see also'}
-        enumType = helpUtils.helpParts.SeeAlso;
+        enumType = classInheritance.helpUtils.helpParts.SeeAlso;
     case 'note'
-        enumType = helpUtils.helpParts.Note;
+        enumType = classInheritance.helpUtils.helpParts.Note;
     case 'raw'
-        enumType = helpUtils.helpParts.Raw;
+        enumType = classInheritance.helpUtils.helpParts.Raw;
     case {'overloaded methods:', 'overloaded'}
-        enumType = helpUtils.helpParts.OverloadedMethods;
+        enumType = classInheritance.helpUtils.helpParts.OverloadedMethods;
     case {'example', 'examples'}
-        enumType = helpUtils.helpParts.Example;
+        enumType = classInheritance.helpUtils.helpParts.Example;
     case {'published output in the help browser', 'demo'}
-        enumType = helpUtils.helpParts.Demo;
+        enumType = classInheritance.helpUtils.helpParts.Demo;
     otherwise
         % partName is invalid.
-        enumType = helpUtils.helpParts.Invalid;
+        enumType = classInheritance.helpUtils.helpParts.Invalid;
     end
 end

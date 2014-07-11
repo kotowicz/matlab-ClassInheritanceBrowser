@@ -77,7 +77,7 @@ function detectedAnyChange = compareForClass(this, prevFilePath)
 
     elementHelpChanged = checkMemberHelpUpdates(methodIterator, methodInfoFcnHandle);
 
-    for elementType = helpUtils.getSimpleElementTypes
+    for elementType = classInheritance.helpUtils.getSimpleElementTypes
         elementHelpChanged = compareForSimpleElement(this, prevClassInfo, elementType.keyword) || elementHelpChanged;
     end
 
@@ -105,11 +105,11 @@ function prevClassInfo = getPreviousClassInfo(prevFilePath)
 
     switch lastDir(1) 
     case '+'
-        prevClassInfo = helpUtils.splitClassInformation(prevFilePath);
+        prevClassInfo = classInheritance.helpUtils.splitClassInformation(prevFilePath);
     case '@'
-        prevClassInfo = helpUtils.splitClassInformation(parentPath);
+        prevClassInfo = classInheritance.helpUtils.splitClassInformation(parentPath);
     otherwise
-        prevClassInfo = helpUtils.classInformation.simpleMCOSConstructor(fileName, ...
+        prevClassInfo = classInheritance.helpUtils.classInformation.simpleMCOSConstructor(fileName, ...
                         prevFilePath, true);
     end
 end

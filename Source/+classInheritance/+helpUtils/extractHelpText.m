@@ -7,7 +7,7 @@ function extractHelpText(inputFullPath, outputDir)
 
     outputFile = fullfile(outputDir, [fileName '.m']);
     if isequal(outputFile, inputFullPath)
-        error(message('MATLAB:helpUtils:extractHelpText:SameFile'));
+        error(message('MATLAB:classInheritance.helpUtils.extractHelpText:SameFile'));
     end
 
     if exist(outputFile, 'file')
@@ -15,11 +15,11 @@ function extractHelpText(inputFullPath, outputDir)
         cleanup = onCleanup(@()warning(s));
         delete(outputFile);
         if exist(outputFile, 'file')
-            error(message('MATLAB:helpUtils:extractHelpText:CannotDeleteFile'));            
+            error(message('MATLAB:classInheritance.helpUtils.extractHelpText:CannotDeleteFile'));            
         end
     end
 
-    helpContainer = helpUtils.containers.HelpContainerFactory.create(inputFullPath, 'onlyLocalHelp', true);
+    helpContainer = classInheritance.helpUtils.containers.HelpContainerFactory.create(inputFullPath, 'onlyLocalHelp', true);
     helpContainer.exportToMFile(outputDir);
 end
 

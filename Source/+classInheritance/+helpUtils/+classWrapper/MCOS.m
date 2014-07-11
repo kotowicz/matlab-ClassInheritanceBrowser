@@ -1,4 +1,4 @@
-classdef MCOS < helpUtils.classWrapper.base
+classdef MCOS < classInheritance.helpUtils.classWrapper.base
     properties (SetAccess=protected, GetAccess=protected)
         metaClass = [];
         packagedName = '';
@@ -17,7 +17,7 @@ classdef MCOS < helpUtils.classWrapper.base
                 supers = cw.metaClass.SuperClasses;
                 for i = 1:length(supers)
                     super = supers{i};
-                    superMethod = helpUtils.getMethod(super, elementName);
+                    superMethod = classInheritance.helpUtils.getMethod(super, elementName);
                     if ~isempty(superMethod)
                         definingClass = superMethod.DefiningClass;
                         [shadowedClassInfo, definingClassWrapper] = cw.getSuperClassInfo(definingClass, superMethod.Abstract, superMethod.Static, elementName);
@@ -38,7 +38,7 @@ classdef MCOS < helpUtils.classWrapper.base
             helpText = '';
             cw.loadClass;
             if ~isempty(cw.metaClass)
-                methodMeta = helpUtils.getMethod(cw.metaClass, elementName);
+                methodMeta = classInheritance.helpUtils.getMethod(cw.metaClass, elementName);
                 helpText = methodMeta.Description;
             end
         end
@@ -63,7 +63,7 @@ classdef MCOS < helpUtils.classWrapper.base
         end
         
         function [classInfo, definingClassWrapper] = getSuperClassInfo(cw, definingClass, isAbstractMethod, isStaticMethod, elementName)
-            definingClassWrapper = helpUtils.classWrapper.superMCOS(definingClass, cw.subClassPath, cw.subClassName, cw.subClassPackageName, isAbstractMethod, isStaticMethod);
+            definingClassWrapper = classInheritance.helpUtils.classWrapper.superMCOS(definingClass, cw.subClassPath, cw.subClassName, cw.subClassPackageName, isAbstractMethod, isStaticMethod);
             classInfo = definingClassWrapper.getElement(elementName, false);
             if ~isempty(classInfo)
                 classInfo.className = cw.className;
@@ -87,9 +87,9 @@ classdef MCOS < helpUtils.classWrapper.base
                     return;
                 end
                 if isAbstract
-                    classInfo = helpUtils.classInformation.abstractMethod(cw, cw.className, cw.classDir, cw.subClassPath, cw.subClassName, methodName, cw.subClassPackageName);
+                    classInfo = classInheritance.helpUtils.classInformation.abstractMethod(cw, cw.className, cw.classDir, cw.subClassPath, cw.subClassName, methodName, cw.subClassPackageName);
                 else
-                    classInfo = helpUtils.classInformation.localMethod(cw, cw.className, cw.classDir, cw.subClassPath, cw.subClassName, methodName, cw.subClassPackageName);
+                    classInfo = classInheritance.helpUtils.classInformation.localMethod(cw, cw.className, cw.classDir, cw.subClassPath, cw.subClassName, methodName, cw.subClassPackageName);
                 end
                 classInfo.setStatic(isStatic);
             end

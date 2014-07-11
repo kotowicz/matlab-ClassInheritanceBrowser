@@ -1,9 +1,9 @@
-classdef localConstructor < helpUtils.classInformation.constructor
+classdef localConstructor < classInheritance.helpUtils.classInformation.constructor
     methods
         function ci = localConstructor(packageName, className, basePath, justChecking)
             definition = fullfile(basePath, [className filemarker className]);
             whichTopic = fullfile(basePath, [className '.m']);
-            ci@helpUtils.classInformation.constructor(packageName, className, definition, whichTopic, justChecking);
+            ci@classInheritance.helpUtils.classInformation.constructor(packageName, className, definition, whichTopic, justChecking);
         end
 
         function [helpText, needsHotlinking] = getSecondaryHelp(ci, hotLinkCommand)

@@ -1,16 +1,16 @@
-classdef simpleMCOSElement < helpUtils.classInformation.simpleElement
+classdef simpleMCOSElement < classInheritance.helpUtils.classInformation.simpleElement
     properties (SetAccess=private, GetAccess=private)
         elementMeta;
     end    
 
     methods
         function ci = simpleMCOSElement(className, elementMeta, classPath, elementKeyword, packageName)
-            ci = ci@helpUtils.classInformation.simpleElement(className, elementMeta.Name, classPath, elementKeyword, packageName);
+            ci = ci@classInheritance.helpUtils.classInformation.simpleElement(className, elementMeta.Name, classPath, elementKeyword, packageName);
             ci.elementMeta = elementMeta;
         end
         
         function b = isAccessibleElement(ci, classElement)
-            b = helpUtils.isAccessible(classElement, ci.elementKeyword);
+            b = classInheritance.helpUtils.isAccessible(classElement, ci.elementKeyword);
         end
         
         function [helpText, needsHotlinking] = getSecondaryHelp(ci, ~)

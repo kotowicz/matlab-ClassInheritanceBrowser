@@ -27,7 +27,7 @@ classdef atomicHelpPart < handle
                 this.title = title;
                 this.enumType = enumType;
             otherwise,
-                error(message('MATLAB:helpUtils:atomicHelpPart:InvalidNargin'));
+                error(message('MATLAB:classInheritance.helpUtils.atomicHelpPart:InvalidNargin'));
             end
         end
       
@@ -44,7 +44,7 @@ classdef atomicHelpPart < handle
         function replaceText(this, newStr)
             % REPLACETEXT - updates the stored help text with input string.
             if ~ischar(newStr)
-                error(message('MATLAB:helpUtils:atomicHelpPart:InvalidInput'));
+                error(message('MATLAB:classInheritance.helpUtils.atomicHelpPart:InvalidInput'));
             end
             
             this.helpStr = newStr;

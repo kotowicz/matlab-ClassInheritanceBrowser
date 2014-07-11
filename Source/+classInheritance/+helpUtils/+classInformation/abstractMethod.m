@@ -1,18 +1,18 @@
-classdef abstractMethod < helpUtils.classInformation.localMethod
+classdef abstractMethod < classInheritance.helpUtils.classInformation.localMethod
     properties (SetAccess=private, GetAccess=private)
         definitionFile = '';
     end
     
     methods
         function ci = abstractMethod(classWrapper, className, basePath, derivedPath, derivedClass, methodName, packageName)
-            ci@helpUtils.classInformation.localMethod(classWrapper, className, basePath, derivedPath, derivedClass, methodName, packageName);
+            ci@classInheritance.helpUtils.classInformation.localMethod(classWrapper, className, basePath, derivedPath, derivedClass, methodName, packageName);
             ci.definitionFile = fullfile(basePath, [className, '.m']);
         end
     end
     
     methods (Access=protected)
         function [helpText, needsHotlinking] = helpfunc(ci, ~)
-            helpText = helpUtils.callHelpFunction(@ci.getHelpTextFromFile, ci.definitionFile);
+            helpText = classInheritance.helpUtils.callHelpFunction(@ci.getHelpTextFromFile, ci.definitionFile);
             needsHotlinking = true;
         end
     end

@@ -1,4 +1,4 @@
-classdef package < helpUtils.classInformation.base
+classdef package < classInheritance.helpUtils.classInformation.base
     properties (SetAccess=private, GetAccess=private)
         isExplicit = false;
         packageName = '';
@@ -6,7 +6,7 @@ classdef package < helpUtils.classInformation.base
     
     methods
         function ci = package(packagePath, isExplicit)
-            ci@helpUtils.classInformation.base(helpUtils.getPackageName(packagePath), packagePath, packagePath);
+            ci@classInheritance.helpUtils.classInformation.base(classInheritance.helpUtils.getPackageName(packagePath), packagePath, packagePath);
             ci.isExplicit = isExplicit;
             ci.packageName = ci.definition;
             ci.isPackage = true;
@@ -23,7 +23,7 @@ classdef package < helpUtils.classInformation.base
         function overqualifyTopic(ci, topic)
             % if a package name has been overqualified to distinguish it from
             % another directory, add it back here
-            overqualifiedPath = helpUtils.splitOverqualification(ci.minimalPath, topic, ci.whichTopic);
+            overqualifiedPath = classInheritance.helpUtils.splitOverqualification(ci.minimalPath, topic, ci.whichTopic);
             if ci.isExplicit
                 ci.definition = [overqualifiedPath, ci.minimalPath];
             else

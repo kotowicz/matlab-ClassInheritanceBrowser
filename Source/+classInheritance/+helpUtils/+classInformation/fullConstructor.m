@@ -1,4 +1,4 @@
-classdef fullConstructor < helpUtils.classInformation.fileConstructor
+classdef fullConstructor < classInheritance.helpUtils.classInformation.fileConstructor
     properties (SetAccess=private, GetAccess=private)
         isUnspecified = false;
     end
@@ -9,7 +9,7 @@ classdef fullConstructor < helpUtils.classInformation.fileConstructor
             if ~exist(fullPath, 'file')
                 fullPath(end) = 'p';
             end
-            ci@helpUtils.classInformation.fileConstructor(packageName, className, basePath, fullPath, noAtDir, justChecking);
+            ci@classInheritance.helpUtils.classInformation.fileConstructor(packageName, className, basePath, fullPath, noAtDir, justChecking);
             ci.classWrapper = classWrapper;
             ci.isUnspecified = isUnspecified;
         end

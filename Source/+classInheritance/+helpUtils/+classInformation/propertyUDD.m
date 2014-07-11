@@ -1,11 +1,11 @@
-classdef propertyUDD < helpUtils.classInformation.simpleElement
+classdef propertyUDD < classInheritance.helpUtils.classInformation.simpleElement
     properties (SetAccess=private, GetAccess=private)
         classWrapper;
     end    
 
     methods
         function ci = propertyUDD(classWrapper, classPath, propertyName, packageName)
-            ci = ci@helpUtils.classInformation.simpleElement(classWrapper.className, propertyName, classPath, 'properties', packageName);
+            ci = ci@classInheritance.helpUtils.classInformation.simpleElement(classWrapper.className, propertyName, classPath, 'properties', packageName);
             ci.classWrapper = classWrapper;
         end
 

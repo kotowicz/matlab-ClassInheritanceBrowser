@@ -1,4 +1,4 @@
-classdef simpleElement < helpUtils.classInformation.classElement
+classdef simpleElement < classInheritance.helpUtils.classInformation.classElement
     properties (SetAccess=private, GetAccess=protected)
         foundElement = false;
         elementKeyword;
@@ -8,20 +8,20 @@ classdef simpleElement < helpUtils.classInformation.classElement
         function ci = simpleElement(className, elementName, classPath, elementKeyword, packageName)
             definition = fullfile(classPath, [className filemarker elementName]);
             whichTopic = fullfile(classPath, [className '.m']);
-            ci@helpUtils.classInformation.classElement(packageName, className, elementName, definition, definition, whichTopic)
+            ci@classInheritance.helpUtils.classInformation.classElement(packageName, className, elementName, definition, definition, whichTopic)
             ci.elementKeyword = elementKeyword;
             ci.isSimpleElement = true;
         end
 
         function topic = fullTopic(ci)
-            %topic = [helpUtils.makePackagedName(ci.packageName, ci.className), '/', ci.element];
-            topic = [helpUtils.makePackagedName(ci.packageName, ci.className), ci.separator, ci.element];
+            %topic = [classInheritance.helpUtils.makePackagedName(ci.packageName, ci.className), '/', ci.element];
+            topic = [classInheritance.helpUtils.makePackagedName(ci.packageName, ci.className), ci.separator, ci.element];
         end
     end
     
     methods (Access=protected)
         function helpText = getElementHelp(ci, helpFile)
-            helpText = helpUtils.callHelpFunction(@ci.getHelpTextFromFile, helpFile);
+            helpText = classInheritance.helpUtils.callHelpFunction(@ci.getHelpTextFromFile, helpFile);
         end
     end
     

@@ -28,7 +28,7 @@ classdef atomicHelpContainer < handle
         
         function helpStr = getH1Line(this)
             % GETH1LINE - returns H-1 line string extracted from stored member help.
-            helpStr = helpUtils.containers.extractH1Line(this.helpStr);
+            helpStr = classInheritance.helpUtils.containers.extractH1Line(this.helpStr);
         end
         
         function result = hasNoHelp(this)

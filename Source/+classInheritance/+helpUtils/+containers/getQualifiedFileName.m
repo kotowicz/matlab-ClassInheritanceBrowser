@@ -3,11 +3,11 @@ function qualifiedName = getQualifiedFileName(filePath)
     % qualified by the enclosing package and/or class
 
     % Copyright 2009 The MathWorks, Inc.
-    qualifiedName = helpUtils.getPackageName(filePath);
+    qualifiedName = classInheritance.helpUtils.getPackageName(filePath);
     
     [folderPath, fileName] = fileparts(filePath);
     
-    if ~helpUtils.containers.isClassDirectory(folderPath)
+    if ~classInheritance.helpUtils.containers.isClassDirectory(folderPath)
         if ~isempty(qualifiedName)
             qualifiedName = [qualifiedName '.' fileName];
         else

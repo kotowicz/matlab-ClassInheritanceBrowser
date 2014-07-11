@@ -706,6 +706,11 @@ classdef browse < handle
             % checks for empty cells and removes them
             indices = cellfun(@(x) isempty(x), this_cell, 'UniformOutput', true);
             this_cell(indices) = [];
+
+            indices = cellfun(@(x) strcmp(x, 'empty'), this_cell, 'UniformOutput', true);
+            this_cell(indices) = [];
+
+            
         end
         
         function enable_disable_listbox_and_contextmenu(handle, on_off)
@@ -721,6 +726,20 @@ classdef browse < handle
     methods (Static = true)
         function [result, absPathname] = resolvePath(class_and_method, class_and_method_private)
             % returns the absolute path for a class/method combination
+            
+            %
+            % ONLY MATLAB >=2014a can deal with package & class directories:
+            % (classInheritance.browse('/path/to/+package')
+            % (classInheritance.browse('/path/to/+package/@line_horizontal_moveable') 
+            %
+            % Previous versions (<= 2013b) need the classes to be located in the given path:
+            % (classInheritance.browse('/path/to/directory_with_classes') 
+            %
+            % This won't work with Matlab <= 2013b
+            % (classInheritance.browse('/path/to/@class_directory') 
+            %
+            
+
             % "which(class_and_method)" will fail here most of the time.
             
             % the idea for this function is hijacked from:
@@ -741,15 +760,15 @@ classdef browse < handle
             try % works with matlab versions <= 2012b
                 [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method, '', true, false);
             catch me %#ok<NASGU> matlab >= 2013a && <= 2014a 
-                [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method, '', false);
+                [classInfo, whichTopic] = classInheritance.helpUtils.splitClassInformation(class_and_method, '', false);
             end
             
             % try again with possible 'private' path
             if isempty(classInfo)
                 try % works with matlab versions <= 2012b
                     [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method_private, '', true, false); %#ok<ASGLU>
-                catch me %#ok<NASGU> matlab == 2013a (and matlab >= 2013a?)
-                    [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method_private, '', false); %#ok<ASGLU>
+                catch me %#ok<NASGU> matlab >= 2013a && <= 2014a 
+                    [classInfo, whichTopic] = classInheritance.helpUtils.splitClassInformation(class_and_method_private, '', false); %#ok<ASGLU>
                 end
             end
             

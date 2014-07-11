@@ -10,8 +10,8 @@ function xmlFilePath = buildHelpXML(helpContainer, outputDirPath)
 % classdef M-file RandStream.m
 %
 % helpContainer = ...
-% helpUtils.containers.HelpContainerFactory.create(which('RandStream'));
-% xmlFilePath = helpUtils.buildHelpXML(helpContainer, pwd);
+% classInheritance.helpUtils.containers.HelpContainerFactory.create(which('RandStream'));
+% xmlFilePath = classInheritance.helpUtils.buildHelpXML(helpContainer, pwd);
 
 % Copyright 2008-2009 The MathWorks, Inc.
     narginchk(1, 2);
@@ -32,7 +32,7 @@ function xmlFilePath = buildHelpXML(helpContainer, outputDirPath)
     
     % if class, add properties/method help data
     if helpContainer.isClassHelpContainer
-        classXmlObj = helpUtils.class2xml(helpContainer);
+        classXmlObj = classInheritance.helpUtils.class2xml(helpContainer);
         classXmlObj.buildClassXml(dom, docRootNode);
         fileType = 'classHelp';
     else

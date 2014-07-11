@@ -1,4 +1,4 @@
-classdef packagedItem < helpUtils.classInformation.base
+classdef packagedItem < classInheritance.helpUtils.classInformation.base
     properties
         packagedName = '';
     end
@@ -6,7 +6,7 @@ classdef packagedItem < helpUtils.classInformation.base
     methods
         function ci = packagedItem(packageName, packagePath, itemName, itemFullName)
             definition = fullfile(packagePath, itemFullName);
-            ci@helpUtils.classInformation.base(definition, definition, definition);
+            ci@classInheritance.helpUtils.classInformation.base(definition, definition, definition);
             ci.packagedName = [packageName '.' itemName];
         end
         

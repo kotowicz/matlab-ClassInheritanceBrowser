@@ -42,13 +42,13 @@ classdef HelpContainerFactory
             %   % Example 1: Create a HelpContainer for an M-function
             %
             % 	filePath = which('addpath.m');
-            %	hC = helpUtils.containers.HelpContainerFactory.create(filePath);
+            %	hC = classInheritance.helpUtils.containers.HelpContainerFactory.create(filePath);
             %
             %   % Example 2: Create a HelpContainer for a classdef M-file
             %
             % 	filePath = which('RandStream.m');
             %
-            %	hC = helpUtils.containers.HelpContainerFactory.create(filePath, ...
+            %	hC = classInheritance.helpUtils.containers.HelpContainerFactory.create(filePath, ...
             %                                               'onlyLocalHelp', true);
             %
             %   hC will not contain help information on properties/methods
@@ -60,7 +60,7 @@ classdef HelpContainerFactory
             %   M-file.
             if ~ischar(filePath)
                 error('MATLAB:HelpContainerFactory:InvalidFilePath','%s', ...
-                    getString(message('MATLAB:helpUtils:extractHelpText:FilePathMustBeAString')));
+                    getString(message('MATLAB:classInheritance.helpUtils.extractHelpText:FilePathMustBeAString')));
             end
             
             % Check for onlyLocalHelp property pair
@@ -76,10 +76,10 @@ classdef HelpContainerFactory
             metaInfo = getMetaInfo(filePath);
             
             if ~isempty(metaInfo) % filePath is a classdef M-file
-                this = helpUtils.containers.ClassHelpContainer(filePath, ...
+                this = classInheritance.helpUtils.containers.ClassHelpContainer(filePath, ...
                     metaInfo, p.Results.onlyLocalHelp);
             else
-                this = helpUtils.containers.FunctionHelpContainer(filePath);
+                this = classInheritance.helpUtils.containers.FunctionHelpContainer(filePath);
             end
         end
     end
@@ -91,7 +91,7 @@ function checkFilePath(filePath)
     
     if isempty(pathStr) || ~exist(filePath, 'file')
         error('MATLAB:HelpContainerFactory:InvalidFilePath', '%s',...
-            getString(message('MATLAB:helpUtils:extractHelpText:HelpContainerFactoryInvalidFilePath', filePath)));
+            getString(message('MATLAB:classInheritance.helpUtils.extractHelpText:HelpContainerFactoryInvalidFilePath', filePath)));
     end
     
 end
@@ -100,9 +100,9 @@ function metaInfo = getMetaInfo(filePath)
     % GETMETAINFO - returns the meta.class information if FILEPATH
     % corresponds to a classdef M-file, otherwise it returns an empty
     % array.
-    if helpUtils.isClassMFile(filePath)
+    if classInheritance.helpUtils.isClassMFile(filePath)
         % True for both old and new MATLAB Class Object System
-        qualifiedName = helpUtils.containers.getQualifiedFileName(filePath);
+        qualifiedName = classInheritance.helpUtils.containers.getQualifiedFileName(filePath);
         
         % metaInfo is empty for old MATLAB Class Object System classes.
         metaInfo = meta.class.fromName(qualifiedName);

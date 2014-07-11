@@ -24,7 +24,7 @@ function updateFromXML(helpContainer, xmlFilePath)
         
         updateConstructorHelp(classInfoNode, helpContainer);
         
-        for elementType = helpUtils.getSimpleElementTypes            
+        for elementType = classInheritance.helpUtils.getSimpleElementTypes            
             updateAllSimpleElementsHelp(classInfoNode, helpContainer, elementType.keyword, elementType.node);
         end
         
@@ -37,7 +37,7 @@ end
 function parseInputs(helpContainer, xmlFilePath)
     % PARSEINPUTS - checks that the input arguments are of the correct
     % type.
-    if ~isa(helpContainer, 'helpUtils.containers.abstractHelpContainer')
+    if ~isa(helpContainer, 'classInheritance.helpUtils.containers.abstractHelpContainer')
         error(message('MATLAB:updateFromXML:InvalidHelpContainer'));
     end
     

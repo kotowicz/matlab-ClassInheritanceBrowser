@@ -1,4 +1,4 @@
-classdef ClassMemberHelpContainer < helpUtils.containers.atomicHelpContainer
+classdef ClassMemberHelpContainer < classInheritance.helpUtils.containers.atomicHelpContainer
     % CLASSMEMBERHELPCONTAINER - stores meta data and help comments for class member
     % A class member can be any of the following:
     % * a constructor
@@ -30,7 +30,7 @@ classdef ClassMemberHelpContainer < helpUtils.containers.atomicHelpContainer
             switch nargin
                 case 4
                     if h1Flag
-                        helpStr = helpUtils.containers.extractH1Line(helpStr);
+                        helpStr = classInheritance.helpUtils.containers.extractH1Line(helpStr);
                     end
 
                     memberName = metaData.Name;  
@@ -46,7 +46,7 @@ classdef ClassMemberHelpContainer < helpUtils.containers.atomicHelpContainer
                     error(message('MATLAB:ClassMemberHelpContainer:IncorrectNumArgs'));
             end
 
-            this = this@helpUtils.containers.atomicHelpContainer(helpStr);
+            this = this@classInheritance.helpUtils.containers.atomicHelpContainer(helpStr);
             this.metaData = metaData;
             this.h1Flag = h1Flag;
             this.Name = memberName;
@@ -58,7 +58,7 @@ classdef ClassMemberHelpContainer < helpUtils.containers.atomicHelpContainer
             if this.h1Flag
                 helpStr = this.getHelp;
             else
-                helpStr = getH1Line@helpUtils.containers.atomicHelpContainer(this);
+                helpStr = getH1Line@classInheritance.helpUtils.containers.atomicHelpContainer(this);
             end
         end
 

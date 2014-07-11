@@ -24,7 +24,7 @@ function errorDocCallback(topic, fileName, lineNumber)
                 if nargin == 3 && ~isempty(fileName)
                     opentoline(fileName, lineNumber, 0);
                 else
-                    helpdlg(getString(message('MATLAB:helpUtils:errorDocCallback:Undocumented', topic)), getString(message('MATLAB:helpUtils:errorDocCallback:UndocumentedTitle')));
+                    helpdlg(getString(message('MATLAB:classInheritance.helpUtils.errorDocCallback:Undocumented', topic)), getString(message('MATLAB:classInheritance.helpUtils.errorDocCallback:UndocumentedTitle')));
                 end
             end
         end

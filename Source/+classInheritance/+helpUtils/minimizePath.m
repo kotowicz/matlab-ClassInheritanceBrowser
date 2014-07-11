@@ -22,7 +22,7 @@ function minimalPath = minimizePath(qualifyingPath, isDir)
 
 %% ------------------------------------------------------------------------
 function path = whatPath(qualifyingPath, pathItem, pathTail)
-    dirInfo = helpUtils.hashedDirInfo(fullfile(qualifyingPath, pathItem, pathTail));
+    dirInfo = classInheritance.helpUtils.hashedDirInfo(fullfile(qualifyingPath, pathItem, pathTail));
     if isempty(dirInfo)
         path = '';
     else

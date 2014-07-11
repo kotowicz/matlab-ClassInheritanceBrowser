@@ -33,7 +33,7 @@ function [classInfo, whichTopic, malformed] = innerSplitClassInformation(topic, 
     
     [classInfo, malformed] = resolveExplicitPath(topic, justChecking);
     if isempty(classInfo) && ~malformed
-        if helpUtils.isObjectDirectorySpecified(topic)
+        if classInheritance.helpUtils.isObjectDirectorySpecified(topic)
             malformed = true;
             return;
         end
@@ -154,17 +154,17 @@ function classInfo = UDDClassInformation(UDDParts, justChecking)
         methodName = inputClassName;
     end
     
-    allPackageInfo = helpUtils.hashedDirInfo(packagePath);
+    allPackageInfo = classInheritance.helpUtils.hashedDirInfo(packagePath);
     for i = 1:length(allPackageInfo)
         packageInfo = allPackageInfo(i);
         packagePath = packageInfo.path;
-        packageName = helpUtils.getPackageName(packagePath);
+        packageName = classInheritance.helpUtils.getPackageName(packagePath);
         [isDocumented, packageID] = isDocumentedPackage(packageInfo, packageName);
         if isDocumented
             classIndex = strcmpi(packageInfo.classes, inputClassName);
             if any(classIndex)
                 className = packageInfo.classes{classIndex};
-                classHandle = helpUtils.classWrapper.rawUDD(className, packagePath, packageID, true);
+                classHandle = classInheritance.helpUtils.classWrapper.rawUDD(className, packagePath, packageID, true);
                 classInfo = classHandle.getClassInformation(methodName, justChecking);
                 if ~isempty(classInfo)
                     return;
@@ -183,27 +183,27 @@ function classInfo = MCOSClassInformation(topic, MCOSParts, justChecking)
     
     if isempty(MCOSParts.packages)
         if isempty(methodName)
-            allPackageInfo = helpUtils.hashedDirInfo(topic);
+            allPackageInfo = classInheritance.helpUtils.hashedDirInfo(topic);
             classInfo = resolvePackageInfo(allPackageInfo, true, justChecking);
         else
-            allPackageInfo = helpUtils.hashedDirInfo([MCOSParts.path '@' inputClassName]);
+            allPackageInfo = classInheritance.helpUtils.hashedDirInfo([MCOSParts.path '@' inputClassName]);
             for i = 1:length(allPackageInfo)
                 packageInfo = allPackageInfo(i);
                 packagePath = packageInfo.path;
-                packageName = helpUtils.getPackageName(packagePath);
+                packageName = classInheritance.helpUtils.getPackageName(packagePath);
                 [isDocumented, packageID] = isDocumentedPackage(packageInfo, packageName);
                 if isDocumented || ischar(packageID)
                     % MCOS or OOPS class or UDD package
-                    [fixedName, foundTarget] = helpUtils.extractFile(packageInfo, methodName);
+                    [fixedName, foundTarget] = classInheritance.helpUtils.extractFile(packageInfo, methodName);
                     if foundTarget
                         % MCOS or OOPS class/method or UDD packaged function
                         if strcmp(inputClassName, fixedName)
-                            classInfo = helpUtils.classInformation.simpleMCOSConstructor(inputClassName, fullfile(packagePath, [inputClassName, MCOSParts.mp]), justChecking);
+                            classInfo = classInheritance.helpUtils.classInformation.simpleMCOSConstructor(inputClassName, fullfile(packagePath, [inputClassName, MCOSParts.mp]), justChecking);
                         elseif isDocumented
-                            classInfo = helpUtils.classInformation.packagedFunction(inputClassName, packagePath, fixedName);
+                            classInfo = classInheritance.helpUtils.classInformation.packagedFunction(inputClassName, packagePath, fixedName);
                         else
-                            classHandle = helpUtils.classWrapper.rawMCOS(fixedName, packagePath, '', false, false);
-                            classInfo = helpUtils.classInformation.fileMethod(classHandle, inputClassName, packagePath, packagePath, fixedName, '');
+                            classHandle = classInheritance.helpUtils.classWrapper.rawMCOS(fixedName, packagePath, '', false, false);
+                            classInfo = classInheritance.helpUtils.classInformation.fileMethod(classHandle, inputClassName, packagePath, packagePath, fixedName, '');
                             classInfo.setAccessible;
                         end
                         return;
@@ -215,19 +215,19 @@ function classInfo = MCOSClassInformation(topic, MCOSParts, justChecking)
         if isempty(MCOSParts.ext)
             helpFunction = '';
         else
-            helpFunction = helpUtils.getHelpFunction(MCOSParts.ext);
+            helpFunction = classInheritance.helpUtils.getHelpFunction(MCOSParts.ext);
             if isempty(helpFunction)
                 return;
             end
         end
         
         packagePath = [MCOSParts.path MCOSParts.packages];
-        allPackageInfo = helpUtils.hashedDirInfo(packagePath);
+        allPackageInfo = classInheritance.helpUtils.hashedDirInfo(packagePath);
         
         if isempty(inputClassName) && isempty(methodName)
             if ~isempty(allPackageInfo)
                 % MCOS Package
-                classInfo = helpUtils.classInformation.package(allPackageInfo(1).path, true);
+                classInfo = classInheritance.helpUtils.classInformation.package(allPackageInfo(1).path, true);
             end
             return;
         end
@@ -240,7 +240,7 @@ function classInfo = MCOSClassInformation(topic, MCOSParts, justChecking)
         for i = 1:length(allPackageInfo)
             packageInfo = allPackageInfo(i);
             packagePath = packageInfo.path;
-            packageName = helpUtils.getPackageName(packagePath);
+            packageName = classInheritance.helpUtils.getPackageName(packagePath);
             className = '';
             
             classHasNoAtDir = false;
@@ -251,10 +251,10 @@ function classInfo = MCOSClassInformation(topic, MCOSParts, justChecking)
                 end
             elseif ~isUnspecifiedConstructor
                 if isempty(MCOSParts.ext)
-                    [className, foundTarget] = helpUtils.extractFile(packageInfo, methodName);
+                    [className, foundTarget] = classInheritance.helpUtils.extractFile(packageInfo, methodName);
                     if foundTarget
-                        if ~helpUtils.isClassMFile(fullfile(packagePath, className))
-                            classInfo = helpUtils.classInformation.packagedFunction(packageName, packagePath, className);
+                        if ~classInheritance.helpUtils.isClassMFile(fullfile(packagePath, className))
+                            classInfo = classInheritance.helpUtils.classInformation.packagedFunction(packageName, packagePath, className);
                             return;
                         end
                         classHasNoAtDir = true;
@@ -265,14 +265,14 @@ function classInfo = MCOSClassInformation(topic, MCOSParts, justChecking)
                     if any(itemIndex)
                         itemFullName = packageList(itemIndex).name;
                         itemName = itemFullName(1:end-length(MCOSParts.ext));
-                        classInfo = helpUtils.classInformation.packagedUnknown(packageName, packagePath, itemName, itemFullName, helpFunction);
+                        classInfo = classInheritance.helpUtils.classInformation.packagedUnknown(packageName, packagePath, itemName, itemFullName, helpFunction);
                         return;
                     end
                 end
             end
             
             if ~isempty(className)
-                classHandle = helpUtils.classWrapper.rawMCOS(className, packagePath, packageName, classHasNoAtDir, true);
+                classHandle = classInheritance.helpUtils.classWrapper.rawMCOS(className, packagePath, packageName, classHasNoAtDir, true);
                 classInfo = classHandle.getClassInformation(methodName, justChecking);
                 if ~isempty(classInfo)
                     return;
@@ -291,7 +291,7 @@ function [classInfo, allPackageInfo] = ternaryClassInformation(objectParts, just
     for i = 1:length(allPackageInfo)
         packageInfo = allPackageInfo(i);
         packagePath = packageInfo.path;
-        packageName = helpUtils.getPackageName(packagePath);
+        packageName = classInheritance.helpUtils.getPackageName(packagePath);
         [isDocumented, packageID] = isDocumentedPackage(packageInfo, packageName);
         if isDocumented
             classIndex = strcmpi(packageInfo.classes, objectParts.class);
@@ -300,16 +300,16 @@ function [classInfo, allPackageInfo] = ternaryClassInformation(objectParts, just
             if any(classIndex)
                 className = packageInfo.classes{classIndex};
             elseif ischar(packageID)
-                [className, foundTarget] = helpUtils.extractFile(packageInfo, objectParts.class);
+                [className, foundTarget] = classInheritance.helpUtils.extractFile(packageInfo, objectParts.class);
                 if foundTarget
                     classHasNoAtDir = true;
                 end
             end
             if ~isempty(className)
                 if ischar(packageID)
-                    classHandle = helpUtils.classWrapper.rawMCOS(className, packagePath, packageID, classHasNoAtDir, false);
+                    classHandle = classInheritance.helpUtils.classWrapper.rawMCOS(className, packagePath, packageID, classHasNoAtDir, false);
                 else
-                    classHandle = helpUtils.classWrapper.rawUDD(className, packagePath, packageID, false);
+                    classHandle = classInheritance.helpUtils.classWrapper.rawUDD(className, packagePath, packageID, false);
                 end
                 classInfo = classHandle.getClassInformation(objectParts.method, justChecking);
                 if ~isempty(classInfo)
@@ -331,25 +331,25 @@ function [classInfo, allPackageInfo] = binaryClassInformation(objectParts, justC
         classHandle = [];
         packageInfo = allPackageInfo(i);
         packagePath = packageInfo.path;
-        packageName = helpUtils.getPackageName(packagePath);
+        packageName = classInheritance.helpUtils.getPackageName(packagePath);
         [isDocumented, packageID] = isDocumentedPackage(packageInfo, packageName);
         if isDocumented
             classIndex = strcmpi(packageInfo.classes, objectParts.class);
             if any(classIndex)
                 objectParts.class = packageInfo.classes{classIndex};
                 if ischar(packageID)
-                    classHandle = helpUtils.classWrapper.rawMCOS(objectParts.class, packagePath, packageID, false, true);
+                    classHandle = classInheritance.helpUtils.classWrapper.rawMCOS(objectParts.class, packagePath, packageID, false, true);
                 else
-                    classHandle = helpUtils.classWrapper.rawUDD(objectParts.class, packagePath, packageID, true);
+                    classHandle = classInheritance.helpUtils.classWrapper.rawUDD(objectParts.class, packagePath, packageID, true);
                 end
             else
-                [className, foundTarget] = helpUtils.extractFile(packageInfo, objectParts.class);
+                [className, foundTarget] = classInheritance.helpUtils.extractFile(packageInfo, objectParts.class);
                 if foundTarget
-                    if ischar(packageID) && helpUtils.isClassMFile(fullfile(packagePath, className))
+                    if ischar(packageID) && classInheritance.helpUtils.isClassMFile(fullfile(packagePath, className))
                         % MCOS Class
-                        classInfo = helpUtils.classInformation.fullConstructor([], packageName, className, packagePath, true, true, justChecking);
+                        classInfo = classInheritance.helpUtils.classInformation.fullConstructor([], packageName, className, packagePath, true, true, justChecking);
                     else
-                        classInfo = helpUtils.classInformation.packagedFunction(packageName, packagePath, className);
+                        classInfo = classInheritance.helpUtils.classInformation.packagedFunction(packageName, packagePath, className);
                     end
                     return;
                 else
@@ -357,11 +357,11 @@ function [classInfo, allPackageInfo] = binaryClassInformation(objectParts, justC
                     items = regexpi({packageList.name}, ['^(?<name>' objectParts.class ')(?<ext>\.\w+)$'], 'names');
                     items = [items{:}];
                     for item = items
-                        helpFunction = helpUtils.getHelpFunction(item.ext);
+                        helpFunction = classInheritance.helpUtils.getHelpFunction(item.ext);
                         if ~isempty(helpFunction)
                             % unknown packaged item with help extension
                             itemFullName = [item.name item.ext];
-                            classInfo = helpUtils.classInformation.packagedUnknown(packageName, packagePath, item.name, itemFullName, helpFunction);
+                            classInfo = classInheritance.helpUtils.classInformation.packagedUnknown(packageName, packagePath, item.name, itemFullName, helpFunction);
                             return;
                         end
                     end
@@ -374,7 +374,7 @@ function [classInfo, allPackageInfo] = binaryClassInformation(objectParts, justC
             if ~isempty(classDir) && classDir(1) == '@'
                 packageSplit = regexp(packageName, '(?<package>.*(?=\.))?\.?(?<class>.*)', 'names');
                 packageName = packageSplit.package;
-                classHandle = helpUtils.classWrapper.rawMCOS(packageSplit.class, packagePath, packageName, false, false);
+                classHandle = classInheritance.helpUtils.classWrapper.rawMCOS(packageSplit.class, packagePath, packageName, false, false);
             end
         end
         if ~isempty(classHandle)
@@ -389,9 +389,9 @@ function [classInfo, allPackageInfo] = binaryClassInformation(objectParts, justC
     if isempty(classMFile)
         classMFile = which([objectParts.pathAndPackage '.p']);
     end
-    if ~helpUtils.isObjectDirectorySpecified(classMFile)
+    if ~classInheritance.helpUtils.isObjectDirectorySpecified(classMFile)
         [packagePath, className] = fileparts(classMFile);
-        classHandle = helpUtils.classWrapper.rawMCOS(className, packagePath, '', true, false);
+        classHandle = classInheritance.helpUtils.classWrapper.rawMCOS(className, packagePath, '', true, false);
         classInfo = classHandle.getClassInformation(objectParts.class, justChecking);
         if ~isempty(classInfo)
             return;
@@ -424,11 +424,11 @@ end
 function [classInfo, whichTopic] = resolveUnaryClass(className, justChecking)
     classInfo = [];
     
-    whichTopic = helpUtils.safeWhich(className);
+    whichTopic = classInheritance.helpUtils.safeWhich(className);
     if ~isempty(whichTopic)
-        [isClassMFile, className] = helpUtils.isClassMFile(whichTopic);
+        [isClassMFile, className] = classInheritance.helpUtils.isClassMFile(whichTopic);
         if isClassMFile
-            classInfo = helpUtils.classInformation.simpleMCOSConstructor(className, whichTopic, justChecking);
+            classInfo = classInheritance.helpUtils.classInformation.simpleMCOSConstructor(className, whichTopic, justChecking);
         end
     end
 end
@@ -439,15 +439,15 @@ function classInfo= resolvePackageInfo(allPackageInfo, isExplicitPackage, justCh
     for i = 1:length(allPackageInfo)
         packageInfo = allPackageInfo(i);
         packagePath = packageInfo.path;
-        packageName = helpUtils.getPackageName(packagePath);
+        packageName = classInheritance.helpUtils.getPackageName(packagePath);
         [isDocumented, packageID] = isDocumentedPackage(packageInfo, packageName);
         if isDocumented
             % Package
-            classInfo = helpUtils.classInformation.package(packagePath, isExplicitPackage);
+            classInfo = classInheritance.helpUtils.classInformation.package(packagePath, isExplicitPackage);
             return;
         elseif ischar(packageID) && ~isempty(regexp(packagePath, '.*[\\/]@\w*$', 'once'));
             % MCOS or OOPS Class
-            classInfo = helpUtils.classInformation.fullConstructor([], '', packageName, packagePath, false, true, justChecking);
+            classInfo = classInheritance.helpUtils.classInformation.fullConstructor([], '', packageName, packagePath, false, true, justChecking);
             return;
         end
     end
@@ -467,13 +467,13 @@ end
 
 %% ------------------------------------------------------------------------
 function [objectParts, newPackageInfo] = convertClassToPackage(objectParts, oldPackageInfo)
-    uddPackageInfo = helpUtils.hashedDirInfo([objectParts.pathAndPackage '/@' objectParts.class]);
-    mcosPackageInfo = helpUtils.hashedDirInfo([objectParts.pathAndPackage '/+' objectParts.class]);
+    uddPackageInfo = classInheritance.helpUtils.hashedDirInfo([objectParts.pathAndPackage '/@' objectParts.class]);
+    mcosPackageInfo = classInheritance.helpUtils.hashedDirInfo([objectParts.pathAndPackage '/+' objectParts.class]);
     newPackageInfo = [uddPackageInfo; mcosPackageInfo];
     for i = 1:numel(oldPackageInfo)
         packageIndex = strcmpi(oldPackageInfo(i).packages, objectParts.class);
         if any(packageIndex)
-            newPackageInfo = [newPackageInfo; helpUtils.hashedDirInfo(fullfile(oldPackageInfo(i).path, ['+' oldPackageInfo(i).packages{packageIndex}]))]; %#ok<AGROW>
+            newPackageInfo = [newPackageInfo; classInheritance.helpUtils.hashedDirInfo(fullfile(oldPackageInfo(i).path, ['+' oldPackageInfo(i).packages{packageIndex}]))]; %#ok<AGROW>
         end
     end
     objectParts.pathAndPackage = [objectParts.pathAndPackage, '/', objectParts.class];
@@ -484,14 +484,14 @@ end
 %% ------------------------------------------------------------------------
 function allPackageInfo = getPackageInfo(packagePath)
     packagePath = regexprep(packagePath, '\.(\w*)$', '/$1');
-    allPackageInfo = helpUtils.hashedDirInfo(regexprep(packagePath, '(^|/)(\w*)$', '$1@$2'));
+    allPackageInfo = classInheritance.helpUtils.hashedDirInfo(regexprep(packagePath, '(^|/)(\w*)$', '$1@$2'));
     pathSeps = regexp(packagePath, '[/.]');
     if isempty(pathSeps)
-        allPackageInfo = [helpUtils.hashedDirInfo(['+' packagePath]); allPackageInfo];
+        allPackageInfo = [classInheritance.helpUtils.hashedDirInfo(['+' packagePath]); allPackageInfo];
     else
         for pathSep = fliplr(pathSeps);
             packagePath = [packagePath(1:pathSep-1), '/+', packagePath(pathSep+1:end)];
-            allPackageInfo = [helpUtils.hashedDirInfo(packagePath); allPackageInfo]; %#ok<AGROW>
+            allPackageInfo = [classInheritance.helpUtils.hashedDirInfo(packagePath); allPackageInfo]; %#ok<AGROW>
         end
     end
 end

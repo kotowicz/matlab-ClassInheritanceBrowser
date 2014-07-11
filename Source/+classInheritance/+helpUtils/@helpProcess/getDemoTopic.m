@@ -3,7 +3,7 @@ function demoTopic = getDemoTopic(hp)
     [path, name] = fileparts(hp.fullTopic);
     if ~isempty(dir(fullfile(path, 'html', [name '.html'])))
         [path, demoTopic] = fileparts(hp.fullTopic);
-        while ~strcmp(hp.fullTopic, helpUtils.safeWhich(demoTopic))
+        while ~strcmp(hp.fullTopic, classInheritance.helpUtils.safeWhich(demoTopic))
             [path, demoDir] = fileparts(path);
             demoTopic = [demoDir, '/', demoTopic]; %#ok<AGROW>
         end

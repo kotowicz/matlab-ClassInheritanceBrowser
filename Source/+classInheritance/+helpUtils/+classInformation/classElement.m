@@ -1,4 +1,4 @@
-classdef classElement < helpUtils.classInformation.classItem
+classdef classElement < classInheritance.helpUtils.classInformation.classItem
     properties (SetAccess=protected, GetAccess=public)
         element = '';
     end
@@ -9,7 +9,7 @@ classdef classElement < helpUtils.classInformation.classItem
         
     methods
         function ci = classElement(packageName, className, element, definition, minimalPath, whichTopic)
-            ci@helpUtils.classInformation.classItem(packageName, className, definition, minimalPath, whichTopic);
+            ci@classInheritance.helpUtils.classInformation.classItem(packageName, className, definition, minimalPath, whichTopic);
             ci.element = element;
         end
         

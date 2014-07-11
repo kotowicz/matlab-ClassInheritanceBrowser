@@ -1,4 +1,4 @@
-classdef superMCOS < helpUtils.classWrapper.MCOS & helpUtils.classWrapper.super
+classdef superMCOS < classInheritance.helpUtils.classWrapper.MCOS & classInheritance.helpUtils.classWrapper.super
     properties (SetAccess=private, GetAccess=private)
         isAbstractMethod = false;
         isStaticMethod = false;
@@ -11,23 +11,23 @@ classdef superMCOS < helpUtils.classWrapper.MCOS & helpUtils.classWrapper.super
             classDir = which(packagedName);
             classDir = fileparts(classDir);
             if isempty(classDir)
-                [~, classDir] = helpUtils.splitClassInformation(packagedName);
+                [~, classDir] = classInheritance.helpUtils.splitClassInformation(packagedName);
                 if isempty(classDir)
                     classDir = '';
                 else
                     classDir = fileparts(classDir);
                 end
             end
-            cw = cw@helpUtils.classWrapper.MCOS(packagedName, className, classDir);
+            cw = cw@classInheritance.helpUtils.classWrapper.MCOS(packagedName, className, classDir);
             cw.metaClass = metaClass;
             if isempty(cw.classPaths)
                 % classdef is not an M-file
                 packageList = regexp(cw.packagedName, '\w+(?=\.)', 'match');
                 if isempty(packageList)
-                    allClassDirs = helpUtils.hashedDirInfo(['@' cw.className]);
+                    allClassDirs = classInheritance.helpUtils.hashedDirInfo(['@' cw.className]);
                     cw.classPaths = {allClassDirs.path};
                 else
-                    topPackageDirs = helpUtils.hashedDirInfo(['+' packageList{1}]);
+                    topPackageDirs = classInheritance.helpUtils.hashedDirInfo(['+' packageList{1}]);
                     packagePaths = {topPackageDirs.path};
                     if ~isscalar(packageList)
                         subpackages = sprintf('/+%s', packageList{2:end});
@@ -49,7 +49,7 @@ classdef superMCOS < helpUtils.classWrapper.MCOS & helpUtils.classWrapper.super
 
         function classInfo = getSimpleElement(cw, classElement, elementKeyword)
             classdefInfo = cw.getSimpleElementHelpFile;
-            classInfo = helpUtils.classInformation.simpleMCOSElement(cw.className, classElement, fileparts(classdefInfo.definition), elementKeyword, cw.subClassPackageName);
+            classInfo = classInheritance.helpUtils.classInformation.simpleMCOSElement(cw.className, classElement, fileparts(classdefInfo.definition), elementKeyword, cw.subClassPackageName);
         end
 
         function b = hasClassHelp(cw)
@@ -78,7 +78,7 @@ classdef superMCOS < helpUtils.classWrapper.MCOS & helpUtils.classWrapper.super
         end
 
         function classInfo = getClassHelpFile(cw)
-            classInfo = helpUtils.classInformation.simpleMCOSConstructor(cw.className, fullfile(cw.classDir, [cw.className '.m']), false);
+            classInfo = classInheritance.helpUtils.classInformation.simpleMCOSConstructor(cw.className, fullfile(cw.classDir, [cw.className '.m']), false);
         end
     end
 end

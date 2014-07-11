@@ -35,7 +35,7 @@ classdef base < handle
                     pathParts = regexp(ci.minimalPath, '^(?<qualifyingPath>[^@+]*)(?(qualifyingPath)[\\/])(?<pathItem>.*)', 'names', 'once');
                     ci.minimalPath = pathParts.pathItem;                    
                 else
-                    ci.minimalPath = helpUtils.minimizePath(ci.minimalPath, ci.isPackage || ci.isConstructor);
+                    ci.minimalPath = classInheritance.helpUtils.minimizePath(ci.minimalPath, ci.isPackage || ci.isConstructor);
                 end
             end
         end
@@ -81,7 +81,7 @@ classdef base < handle
         
         function set.unaryName(ci, name)
             if ~isempty(regexp(name, '^\w*$', 'once'))
-                ci.unaryName = helpUtils.extractCaseCorrectedName(ci.definition, name); %#ok<MCSUP>
+                ci.unaryName = classInheritance.helpUtils.extractCaseCorrectedName(ci.definition, name); %#ok<MCSUP>
             end
         end
         
@@ -120,7 +120,7 @@ classdef base < handle
         
         function docTopic = innerGetDocTopic(ci, topic, isClassElement)
             topic = strrep(topic, '/', '.');
-            docTopic = helpUtils.getDocTopic(ci.definition, topic, isClassElement);
+            docTopic = classInheritance.helpUtils.getDocTopic(ci.definition, topic, isClassElement);
         end        
     end
 end

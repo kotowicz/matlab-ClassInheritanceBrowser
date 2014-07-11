@@ -1,4 +1,4 @@
-classdef constructor < helpUtils.classInformation.classItem
+classdef constructor < classInheritance.helpUtils.classInformation.classItem
     properties (SetAccess=protected, GetAccess=protected)
         metaClass = [];
         packagedName = '';
@@ -8,7 +8,7 @@ classdef constructor < helpUtils.classInformation.classItem
 
     methods
         function ci = constructor(packageName, className, definition, whichTopic, justChecking)
-            ci@helpUtils.classInformation.classItem(packageName, className, definition, definition, whichTopic);
+            ci@classInheritance.helpUtils.classInformation.classItem(packageName, className, definition, definition, whichTopic);
             if ~justChecking
                 ci.loadClass;
                 if ci.classError
@@ -43,7 +43,7 @@ classdef constructor < helpUtils.classInformation.classItem
             if ~ci.classLoaded
                 ci.classLoaded = true;
                 try
-                    ci.packagedName = helpUtils.makePackagedName(ci.packageName, ci.className);
+                    ci.packagedName = classInheritance.helpUtils.makePackagedName(ci.packageName, ci.className);
                     ci.metaClass = meta.class.fromName(ci.packagedName);
                 catch e %#ok<NASGU>
                     ci.classError = true;

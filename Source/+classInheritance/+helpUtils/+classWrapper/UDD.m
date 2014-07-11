@@ -1,4 +1,4 @@
-classdef UDD < helpUtils.classWrapper.base
+classdef UDD < classInheritance.helpUtils.classWrapper.base
     properties (SetAccess=protected, GetAccess=protected)
         packageName;
         schemaClass;
@@ -10,7 +10,7 @@ classdef UDD < helpUtils.classWrapper.base
             if ~isempty(cw.schemaClass)
                 supers = cw.schemaClass.SuperClasses';
                 for super = supers
-                    wrappedSuper = helpUtils.classWrapper.superUDD(super, cw.subClassPath, cw.subClassPackageName);
+                    wrappedSuper = classInheritance.helpUtils.classWrapper.superUDD(super, cw.subClassPath, cw.subClassPackageName);
     
                     classInfo = wrappedSuper.getElement(elementName, false);
     
@@ -32,10 +32,10 @@ classdef UDD < helpUtils.classWrapper.base
             if ~isempty(cw.schemaClass)
                 supers = cw.schemaClass.SuperClasses';
                 for super = supers
-                    wrappedSuper = helpUtils.classWrapper.superUDD(super, cw.subClassPath, cw.subClassPackageName);
+                    wrappedSuper = classInheritance.helpUtils.classWrapper.superUDD(super, cw.subClassPath, cw.subClassPackageName);
                     
                     classdefInfo = wrappedSuper.getSimpleElementHelpFile;
-                    superProperty = helpUtils.classInformation.propertyUDD(wrappedSuper, fileparts(classdefInfo.definition), propertyName, cw.subClassPackageName);
+                    superProperty = classInheritance.helpUtils.classInformation.propertyUDD(wrappedSuper, fileparts(classdefInfo.definition), propertyName, cw.subClassPackageName);
 
                     [helpText, superClassInfo] = superProperty.getSuperHelp;
                     
@@ -52,7 +52,7 @@ classdef UDD < helpUtils.classWrapper.base
 
     methods (Access=protected)
         function classInfo = getFileMethod(cw, methodName)
-            classInfo = getFileMethod@helpUtils.classWrapper.base(cw, methodName);
+            classInfo = getFileMethod@classInheritance.helpUtils.classWrapper.base(cw, methodName);
             if ~isempty(classInfo) && ~isempty(cw.schemaClass)
                 for classMethod = cw.schemaClass.Methods'
                     if strcmpi(classMethod.Name, methodName)

@@ -1,4 +1,4 @@
-classdef fileConstructor < helpUtils.classInformation.constructor
+classdef fileConstructor < classInheritance.helpUtils.classInformation.constructor
     properties (SetAccess=protected, GetAccess=protected)
         noAtDir = true;
         classPath = '';
@@ -7,7 +7,7 @@ classdef fileConstructor < helpUtils.classInformation.constructor
     
     methods
         function ci = fileConstructor(packageName, className, classPath, fullPath, noAtDir, justChecking)
-            ci@helpUtils.classInformation.constructor(packageName, className, fullPath, fullPath, justChecking);
+            ci@classInheritance.helpUtils.classInformation.constructor(packageName, className, fullPath, fullPath, justChecking);
             ci.classPath = classPath;
             ci.noAtDir = noAtDir;
         end
@@ -29,7 +29,7 @@ classdef fileConstructor < helpUtils.classInformation.constructor
             constructorInfo = [];
             if useClassHelp || ci.checkHelp
                 % only concerned with constructor info if there is both class and constructor help
-                constructorInfo = helpUtils.classInformation.localConstructor(ci.packageName, ci.className, ci.classPath, false);
+                constructorInfo = classInheritance.helpUtils.classInformation.localConstructor(ci.packageName, ci.className, ci.classPath, false);
                 if ~useClassHelp && ~constructorInfo.hasHelp;
                     constructorInfo = [];                    
                 end
@@ -63,7 +63,7 @@ classdef fileConstructor < helpUtils.classInformation.constructor
                 else
                     packagePath = fileparts(ci.classPath);
                 end
-                ci.classWrapper = helpUtils.classWrapper.rawMCOS(ci.className, packagePath, ci.packageName, ci.noAtDir, false);
+                ci.classWrapper = classInheritance.helpUtils.classWrapper.rawMCOS(ci.className, packagePath, ci.packageName, ci.noAtDir, false);
             end
         end
     end

@@ -1,17 +1,17 @@
-classdef rawMCOS < helpUtils.classWrapper.MCOS & helpUtils.classWrapper.raw
+classdef rawMCOS < classInheritance.helpUtils.classWrapper.MCOS & classInheritance.helpUtils.classWrapper.raw
     properties (SetAccess=private, GetAccess=private)
         packageName = '';
     end
 
     methods
         function cw = rawMCOS(className, packagePath, packageName, classHasNoAtDir, isUnspecifiedConstructor)
-            packagedName = helpUtils.makePackagedName(packageName, className);
+            packagedName = classInheritance.helpUtils.makePackagedName(packageName, className);
             if classHasNoAtDir
                 classDir = packagePath;
             else
                 classDir = fullfile(packagePath, ['@', className]);
             end
-            cw = cw@helpUtils.classWrapper.MCOS(packagedName, className, classDir);
+            cw = cw@classInheritance.helpUtils.classWrapper.MCOS(packagedName, className, classDir);
             cw.classHasNoAtDir = classHasNoAtDir;
             cw.isUnspecifiedConstructor = isUnspecifiedConstructor;
             cw.packageName = packageName;
@@ -22,9 +22,9 @@ classdef rawMCOS < helpUtils.classWrapper.MCOS & helpUtils.classWrapper.raw
 
         function classInfo = getConstructor(cw, justChecking)
             if cw.isUnspecifiedConstructor
-                classInfo = helpUtils.classInformation.fullConstructor(cw, cw.packageName, cw.className, cw.subClassPath, cw.classHasNoAtDir, true, justChecking);
+                classInfo = classInheritance.helpUtils.classInformation.fullConstructor(cw, cw.packageName, cw.className, cw.subClassPath, cw.classHasNoAtDir, true, justChecking);
             else
-                classInfo = helpUtils.classInformation.localConstructor(cw.packageName, cw.className, cw.subClassPath, justChecking);
+                classInfo = classInheritance.helpUtils.classInformation.localConstructor(cw.packageName, cw.className, cw.subClassPath, justChecking);
             end
         end
 
@@ -32,7 +32,7 @@ classdef rawMCOS < helpUtils.classWrapper.MCOS & helpUtils.classWrapper.raw
             if cw.classHasNoAtDir
                 classInfo = cw.getLocalElement(elementName, justChecking);
             else
-                classInfo = cw.getElement@helpUtils.classWrapper.MCOS(elementName, justChecking);
+                classInfo = cw.getElement@classInheritance.helpUtils.classWrapper.MCOS(elementName, justChecking);
             end
             if ~isempty(classInfo)
                 classInfo.setAccessible;
@@ -60,9 +60,9 @@ classdef rawMCOS < helpUtils.classWrapper.MCOS & helpUtils.classWrapper.raw
                 definingClass = classElement.DefiningClass;
             end
             if definingClass == cw.metaClass || justChecking
-                classInfo = helpUtils.classInformation.simpleMCOSElement(cw.className, classElement, cw.subClassPath, elementKeyword, cw.subClassPackageName);
+                classInfo = classInheritance.helpUtils.classInformation.simpleMCOSElement(cw.className, classElement, cw.subClassPath, elementKeyword, cw.subClassPackageName);
             else
-                definingClassWrapper = helpUtils.classWrapper.superMCOS(definingClass, cw.subClassPath, cw.subClassName, cw.subClassPackageName);
+                definingClassWrapper = classInheritance.helpUtils.classWrapper.superMCOS(definingClass, cw.subClassPath, cw.subClassName, cw.subClassPackageName);
                 classInfo = definingClassWrapper.getSimpleElement(classElement, elementKeyword);
                 classInfo.className = cw.className;
                 classInfo.superWrapper = definingClassWrapper;
@@ -79,12 +79,12 @@ classdef rawMCOS < helpUtils.classWrapper.MCOS & helpUtils.classWrapper.raw
             classInfo = [];
             cw.loadClass;
             if ~isempty(cw.metaClass)
-                classMethod = helpUtils.getMethod(cw.metaClass, elementName);
+                classMethod = classInheritance.helpUtils.getMethod(cw.metaClass, elementName);
 
                 if ~isempty(classMethod)
                     classInfo = cw.innerGetMethod(classMethod);
                 else
-                    [classElement, elementKeyword] = helpUtils.getSimpleElement(cw.metaClass, elementName);
+                    [classElement, elementKeyword] = classInheritance.helpUtils.getSimpleElement(cw.metaClass, elementName);
 
                     if ~isempty(classElement)
                         classInfo = cw.getSimpleElement(classElement, elementKeyword, justChecking);
@@ -109,7 +109,7 @@ classdef rawMCOS < helpUtils.classWrapper.MCOS & helpUtils.classWrapper.raw
         end
 
         function setAccessibleMethod(cw, classInfo, classMethod)
-            classInfo.isAccessible = ~cw.metaClass.Hidden && helpUtils.isAccessible(classMethod, 'methods');
+            classInfo.isAccessible = ~cw.metaClass.Hidden && classInheritance.helpUtils.isAccessible(classMethod, 'methods');
         end
     end
 end

@@ -1,13 +1,13 @@
 function getTopicHelpText(hp)
-    [hp.isOperator, hp.topic] = helpUtils.isOperator(hp.topic, true);
+    [hp.isOperator, hp.topic] = classInheritance.helpUtils.isOperator(hp.topic, true);
 
     if hp.isOperator
         hasLocalFunction = false;
     else
-        [hp.topic, hasLocalFunction] = helpUtils.fixLocalFunctionCase(hp.topic);
+        [hp.topic, hasLocalFunction] = classInheritance.helpUtils.fixLocalFunctionCase(hp.topic);
 
         if ~hasLocalFunction
-            [classInfo, hp.fullTopic, malformed] = helpUtils.splitClassInformation(hp.topic, '', false);
+            [classInfo, hp.fullTopic, malformed] = classInheritance.helpUtils.splitClassInformation(hp.topic, '', false);
             if ~isempty(classInfo)
                 if classInfo.isAccessible
                     [hp.helpStr, hp.needsHotlinking] = classInfo.getHelp(hp.command, hp.topic, hp.wantHyperlinks);
@@ -22,10 +22,10 @@ function getTopicHelpText(hp)
                 return;
             end
 
-            [hp.topic, ~, hp.fullTopic, ~, alternateHelpFunction] = helpUtils.fixFileNameCase(hp.topic, '', hp.fullTopic);
+            [hp.topic, ~, hp.fullTopic, ~, alternateHelpFunction] = classInheritance.helpUtils.fixFileNameCase(hp.topic, '', hp.fullTopic);
 
             if ~isempty(alternateHelpFunction)
-                hp.helpStr = helpUtils.callHelpFunction(alternateHelpFunction, hp.fullTopic);
+                hp.helpStr = classInheritance.helpUtils.callHelpFunction(alternateHelpFunction, hp.fullTopic);
                 hp.needsHotlinking = true;
                 [~, hp.topic] = fileparts(hp.fullTopic);
                 return;
@@ -39,12 +39,12 @@ function getTopicHelpText(hp)
         if ~isempty(helpFor)
             hp.extractFromClassInfo(helpFor.topic);
         else 
-            dirInfos = helpUtils.hashedDirInfo(hp.topic)';
+            dirInfos = classInheritance.helpUtils.hashedDirInfo(hp.topic)';
             if isempty(hp.fullTopic)
                 for dirInfo = dirInfos
-                    hp.fullTopic = helpUtils.extractCaseCorrectedName(dirInfo.path, hp.topic);
+                    hp.fullTopic = classInheritance.helpUtils.extractCaseCorrectedName(dirInfo.path, hp.topic);
                     if ~isempty(hp.fullTopic)
-                        hp.topic = helpUtils.minimizePath(hp.fullTopic, true);
+                        hp.topic = classInheritance.helpUtils.minimizePath(hp.fullTopic, true);
                         hp.isDir = true;
                         return;
                     end

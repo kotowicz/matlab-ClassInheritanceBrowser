@@ -18,7 +18,7 @@ end
 
 function path = joinPath(fullPath, pathParts)
     path = sprintf('%s/', pathParts{:});
-    path = helpUtils.extractCaseCorrectedName(fullPath, path);
+    path = classInheritance.helpUtils.extractCaseCorrectedName(fullPath, path);
 end
 %   Copyright 2007 The MathWorks, Inc.
 %   $Revision: 1.1.10.3 $  $Date: 2009/07/06 20:37:29 $

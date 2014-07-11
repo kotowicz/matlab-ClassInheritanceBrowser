@@ -7,13 +7,13 @@ function prepareHelpForDisplay(hp)
 
         hp.getDocTopic;
         if ~isempty(hp.docTopic) && hp.commandIsHelp
-            hp.addMoreInfo(getString(message('MATLAB:helpUtils:displayHelp:ReferencePageInHelpBrowser')), 'doc', hp.docTopic);
+            hp.addMoreInfo(getString(message('MATLAB:classInheritance.helpUtils.displayHelp:ReferencePageInHelpBrowser')), 'doc', hp.docTopic);
         end
 
         if ~hp.isDir
             demoTopic = hp.getDemoTopic;
             if ~isempty(demoTopic)
-                hp.addMoreInfo(getString(message('MATLAB:helpUtils:displayHelp:PublishedOutputInTheHelpBrowser')), 'showdemo', demoTopic);
+                hp.addMoreInfo(getString(message('MATLAB:classInheritance.helpUtils.displayHelp:PublishedOutputInTheHelpBrowser')), 'showdemo', demoTopic);
             end
         end
     end

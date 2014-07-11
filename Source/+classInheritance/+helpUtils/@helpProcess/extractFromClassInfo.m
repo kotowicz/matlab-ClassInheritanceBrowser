@@ -1,6 +1,6 @@
 function extractFromClassInfo(hp, classInfo)
     if ischar(classInfo)
-        [classInfo, hp.fullTopic] = helpUtils.splitClassInformation(classInfo, '', false);
+        [classInfo, hp.fullTopic] = classInheritance.helpUtils.splitClassInformation(classInfo, '', false);
         if isempty(classInfo)
             return;
         end

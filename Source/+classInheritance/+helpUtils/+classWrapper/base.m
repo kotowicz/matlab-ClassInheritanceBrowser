@@ -47,15 +47,15 @@ classdef base < handle
         function classInfo = getFileMethod(cw, methodName)
             classInfo = [];
             for j=1:length(cw.classPaths)
-                allClassInfo = helpUtils.hashedDirInfo(cw.classPaths{j});
+                allClassInfo = classInheritance.helpUtils.hashedDirInfo(cw.classPaths{j});
                 if isempty(allClassInfo)
                     cw.classPaths{j} = fileparts(cw.classPaths{j});
                 else
                     for i = 1:length(allClassInfo)
                         classDirInfo = allClassInfo(i);
-                        [fixedName, foundTarget] = helpUtils.extractFile(classDirInfo, methodName);
+                        [fixedName, foundTarget] = classInheritance.helpUtils.extractFile(classDirInfo, methodName);
                         if foundTarget
-                            classInfo = helpUtils.classInformation.fileMethod(cw, cw.className, classDirInfo.path, cw.subClassPath, fixedName, cw.subClassPackageName);
+                            classInfo = classInheritance.helpUtils.classInformation.fileMethod(cw, cw.className, classDirInfo.path, cw.subClassPath, fixedName, cw.subClassPackageName);
                             return;
                         end
                     end

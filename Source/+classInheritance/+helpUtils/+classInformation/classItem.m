@@ -1,4 +1,4 @@
-classdef classItem < helpUtils.classInformation.base
+classdef classItem < classInheritance.helpUtils.classInformation.base
     properties
         packageName = '';
         className = '';
@@ -9,7 +9,7 @@ classdef classItem < helpUtils.classInformation.base
 
     methods
         function ci = classItem(packageName, className, definition, minimalPath, whichTopic)
-            ci@helpUtils.classInformation.base(definition, minimalPath, whichTopic);
+            ci@classInheritance.helpUtils.classInformation.base(definition, minimalPath, whichTopic);
             ci.packageName = packageName;
             ci.className = className;
         end
@@ -17,13 +17,13 @@ classdef classItem < helpUtils.classInformation.base
     
     methods (Access=protected)
         function topic = fullClassName(ci)
-            topic = helpUtils.makePackagedName(ci.packageName, ci.className);
+            topic = classInheritance.helpUtils.makePackagedName(ci.packageName, ci.className);
         end
 
         function helpText = postprocessHelp(ci, helpText, wantHyperlinks)
             ci.prepareSuperClassName;
             if ~isempty(ci.fullSuperClassName)
-                helpParts = helpUtils.helpParts(helpText);
+                helpParts = classInheritance.helpUtils.helpParts(helpText);
                 seeAlsoPart = helpParts.getPart('seeAlso');
                 if ~isempty(seeAlsoPart)
                     fullSubClassName =  ci.fullClassName;
@@ -35,7 +35,7 @@ classdef classItem < helpUtils.classInformation.base
                 end
                 
                 if ci.superWrapper.hasClassHelp
-                    helpText = getString(message('MATLAB:helpUtils:displayHelp:HelpInheritedFromSuperclass', helpText, ci.fullTopic, hyperName(ci.fullSuperClassName, wantHyperlinks)));
+                    helpText = getString(message('MATLAB:classInheritance.helpUtils.displayHelp:HelpInheritedFromSuperclass', helpText, ci.fullTopic, hyperName(ci.fullSuperClassName, wantHyperlinks)));
                 end
             end
         end
@@ -43,10 +43,10 @@ classdef classItem < helpUtils.classInformation.base
         function prepareSuperClassName(ci)
             if ~isempty(ci.superWrapper)
                 % now note that we've updated the help for the subclass
-                ci.fullSuperClassName = helpUtils.getPackageName(ci.definition);
+                ci.fullSuperClassName = classInheritance.helpUtils.getPackageName(ci.definition);
                 if ~any(ci.definition=='@')
                     ci.superClassName = regexp(ci.definition, ['\<(\w+)' filemarker], 'tokens', 'once');
-                    ci.fullSuperClassName = helpUtils.makePackagedName(ci.fullSuperClassName, ci.superClassName{1});
+                    ci.fullSuperClassName = classInheritance.helpUtils.makePackagedName(ci.fullSuperClassName, ci.superClassName{1});
                 else
                     ci.superClassName = regexp(ci.fullSuperClassName, '\w*$', 'match', 'once');
                 end

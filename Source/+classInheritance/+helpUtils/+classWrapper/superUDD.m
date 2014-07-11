@@ -1,4 +1,4 @@
-classdef superUDD < helpUtils.classWrapper.UDD & helpUtils.classWrapper.super
+classdef superUDD < classInheritance.helpUtils.classWrapper.UDD & classInheritance.helpUtils.classWrapper.super
     methods
         function cw = superUDD(schemaClass, subClassPath, subClassPackageName)
             cw.subClassPackageName = subClassPackageName;
@@ -6,7 +6,7 @@ classdef superUDD < helpUtils.classWrapper.UDD & helpUtils.classWrapper.super
             cw.schemaClass = schemaClass;
             cw.className = schemaClass.Name;
             cw.packageName = schemaClass.Package.Name;
-            allPackageDirs = helpUtils.hashedDirInfo(['@' cw.packageName]);
+            allPackageDirs = classInheritance.helpUtils.hashedDirInfo(['@' cw.packageName]);
             packagePaths = {allPackageDirs.path};
             cw.classPaths = strcat(packagePaths, ['/@' cw.className]);
         end
@@ -15,7 +15,7 @@ classdef superUDD < helpUtils.classWrapper.UDD & helpUtils.classWrapper.super
             if strcmpi(cw.className, elementName)
                 classInfo = cw.getSuperElement(elementName);
             else
-                classInfo = cw.getElement@helpUtils.classWrapper.UDD(elementName, justChecking);
+                classInfo = cw.getElement@classInheritance.helpUtils.classWrapper.UDD(elementName, justChecking);
             end
         end
         

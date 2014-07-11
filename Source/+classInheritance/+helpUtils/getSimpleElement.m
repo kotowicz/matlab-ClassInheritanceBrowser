@@ -1,5 +1,5 @@
 function [classElement, elementKeyword] = getSimpleElement(metaClass, elementName)
-    for elementType = helpUtils.getSimpleElementTypes
+    for elementType = classInheritance.helpUtils.getSimpleElementTypes
         elementKeyword = elementType.keyword;
         classElement = filterElement(metaClass, elementType.list, elementName);
         if ~isempty(classElement)

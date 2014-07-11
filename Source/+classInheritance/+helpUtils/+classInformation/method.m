@@ -1,4 +1,4 @@
-classdef method < helpUtils.classInformation.classElement   
+classdef method < classInheritance.helpUtils.classInformation.classElement   
     properties (SetAccess=private, GetAccess=private)
         classWrapper;
     end
@@ -9,7 +9,7 @@ classdef method < helpUtils.classInformation.classElement
     
     methods
         function ci = method(classWrapper, packageName, className, methodName, definition, minimalPath, whichTopic)
-            ci@helpUtils.classInformation.classElement(packageName, className, methodName, definition, minimalPath, whichTopic);
+            ci@classInheritance.helpUtils.classInformation.classElement(packageName, className, methodName, definition, minimalPath, whichTopic);
             ci.classWrapper = classWrapper;
             ci.isMethod = true;
         end
