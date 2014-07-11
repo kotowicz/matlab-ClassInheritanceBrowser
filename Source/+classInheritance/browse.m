@@ -13,6 +13,7 @@ classdef browse < handle
         guiHan
         bioinfo_toolbox = 0;
         NODIRSTRING = 'No dir found. Go up.';
+        path_to_selected_class
     end
     
     %% PUBLIC methods
@@ -60,6 +61,9 @@ classdef browse < handle
                 obj.trees.view();
             end
             
+            
+            obj.path_to_selected_class = obj.trees.fullpath;
+            
             % build main gui
             setup_gui(obj);
             
@@ -97,7 +101,7 @@ classdef browse < handle
         
         function LOCALbrowseCb(obj, src, evnt) %#ok<INUSD>
             % allow user to browse to different directory
-            start_path = get(obj.guiHan.dirH, 'String');
+            start_path = obj.path_to_selected_class;
             dialog_title = 'Please select new directory';
             try
                 folder_name = uigetdir(start_path,dialog_title);
@@ -105,6 +109,7 @@ classdef browse < handle
                 folder_name = uigetdir('', dialog_title);
             end
             set(obj.guiHan.dirH, 'String', folder_name);
+            obj.path_to_selected_class = folder_name;
         end
         
         
@@ -126,7 +131,7 @@ classdef browse < handle
             end
             
             drawnow();
-            inputdir = get(obj.guiHan.dirH, 'String');
+            inputdir = obj.path_to_selected_class;
             if isempty(inputdir)
                 inputdir = '.';
             end
@@ -190,12 +195,23 @@ classdef browse < handle
                 return;
             end
             
+% manual method of finding class files - too much work for now.
+%            curr_path = pwd();
+%            cd(obj.path_to_selected_class);
+%
+%            look_for_file = dir([ selected_class '.m']);
+%            look_for_dir = dir(['*' selected_class]);
+%            stuff_found = [look_for_file; look_for_dir];
+%
+%            [path_to_class, result] = find_class_method_file(obj, stuff_found);
+%            which_file = path_to_class;
+
             dd = filesep();
             class_name_and_method = [selected_class dd selected_method];
             class_name_and_method_private = [selected_class dd 'private' dd selected_method];
             [result, which_file] = classInheritance.browse.resolvePath(class_name_and_method, class_name_and_method_private);
 
-            
+
             % found a file.
             if result == 1
                 [pathstr, name] = fileparts(which_file); %#ok<ASGLU>
@@ -218,6 +234,58 @@ classdef browse < handle
                 % open file at correct line_number
                 opentoline(which_file, line_number);
             end
+            
+        end
+        
+        function [path_to_file, result] = find_class_method_file(obj, stuff_found)
+        % this is not as easy as I initially thought, because classes might
+        % be subclasses of the form "super.sub.inferior", which means we
+        % have to check for each subdirectory, etc, etc.
+            path_to_file = [];
+            dd = filesep();
+            
+            switch numel(stuff_found)
+                case 0
+                    result = 0;
+                case 1
+                    % Found a file that matches the class name.
+                    if stuff_found.isdir == 0
+                        path_to_file = fullfile(obj.path_to_selected_class, stuff_found.name);
+                        result = 1;
+                        
+                        % Found directory which matches the class name
+                    else
+                        % 1) method might be in its own file called "selected_method.m"
+                        % 2) method might be in private/ directory called "private/selected_method.m"
+                        % 3) method might be inside class file
+                        
+                        path_to_class_dir = [obj.path_to_selected_class dd stuff_found.name dd];
+                        public_method_file = dir([path_to_class_dir selected_method '.m']);
+                        private_method_file = dir([path_to_class_dir dd 'private' dd selected_method '.m']);
+                        
+                        if numel(public_method_file) == 1
+                            path_to_file = fullfile(path_to_class_dir, public_method_file.name);
+                            result = 1;
+                            return;
+                        end
+                        
+                        if numel(private_method_file) == 1
+                            path_to_file = fullfile(path_to_class_dir, 'private', public_method_file.name);
+                            result = 1;
+                            return;
+                        end
+                        
+                        path_to_file = fullfile(path_to_class_dir, selected_class);
+                        result = 1;
+                        return;
+                        
+                    end
+                    
+                otherwise
+                    error('something went wrong');
+                    
+            end
+            
         end
         
         function LOOCALpropLb(obj, src, evt)
@@ -225,7 +293,7 @@ classdef browse < handle
             % find out what item user clicked on
             selected_entry = get(src, 'Value');
             subdirs = get(src, 'String');
-            curr_dir = get(obj.guiHan.dirH, 'String');
+            curr_dir = obj.path_to_selected_class;
             
             new_dir_selected = false;
             
@@ -248,6 +316,7 @@ classdef browse < handle
             
             % set the new path.
             set(obj.guiHan.dirH, 'String', new_dir);
+            obj.path_to_selected_class = new_dir;
            
             % Run the 'Go' callback, fake the 'return' key being pressed.
             %
@@ -671,7 +740,7 @@ classdef browse < handle
             %
             try % works with matlab versions <= 2012b
                 [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method, '', true, false);
-            catch me %#ok<NASGU> matlab == 2013a (and matlab >= 2013a?)
+            catch me %#ok<NASGU> matlab >= 2013a && <= 2014a 
                 [classInfo, whichTopic] = helpUtils.splitClassInformation(class_and_method, '', false);
             end
             
