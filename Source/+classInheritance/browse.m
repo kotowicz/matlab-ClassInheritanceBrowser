@@ -74,14 +74,14 @@ classdef browse < handle
             display('Class Inheritance Analyzer/Browser')
         end
         
-        function closefunc(src,evt,obj) %#ok<INUSL,MANU>
+        function closefunc(obj, src, evnt) %#ok<INUSD>
             if ~isempty(obj.trees) && ~isempty(obj.trees.directory)
                 close(findobj('name',['Class Inheritance tree for ', obj.trees.directory]))
             end
             delete(obj.guiHan.f)
         end
         
-        function KeyPressFcn_browse(src, evnt, obj) %#ok<MANU>
+        function KeyPressFcn_browse(obj, src, evnt) %#ok<INUSL>
             try % maybe not all kpfs are committed.
                 switch evnt.Key
                     
@@ -95,7 +95,7 @@ classdef browse < handle
             end
         end
         
-        function LOCALbrowseCb(src, evnt, obj) %#ok<INUSL,MANU>
+        function LOCALbrowseCb(obj, src, evnt) %#ok<INUSD>
             % allow user to browse to different directory
             start_path = get(obj.guiHan.dirH, 'String');
             dialog_title = 'Please select new directory';
@@ -108,10 +108,10 @@ classdef browse < handle
         end
         
         
-        function LOCALdirCb(src,evt,obj)
+        function LOCALdirCb(obj, src, evt)
             flag = 1;
             
-            % check for keypresses if pushbotton didn't get pressed
+            % check for keypresses, in case pushbutton didn't get pressed
             if ~strcmp(get(src,'style'),'pushbutton')
                 if strcmp(evt.Key,'return')
                     flag = 1;
@@ -147,7 +147,10 @@ classdef browse < handle
                 end
                 entries{1, 1} = 'Go up';
                 
-                set(obj.guiHan.directoryList, 'String', entries);
+                % 'Value' might be a larger number than numel(entries),
+                % we except at least two values here, so let's select the
+                % first directory.
+                set(obj.guiHan.directoryList, 'String', entries, 'Value', 2);
                 
             else
                 set(obj.guiHan.directoryList, 'String', obj.NODIRSTRING, 'Value', 1);
@@ -176,7 +179,7 @@ classdef browse < handle
 
         end
         
-        function LOCALmethCb(src, evt, obj) %#ok<MANU,INUSL>
+        function LOCALmethCb(obj, src, evt) %#ok<INUSD>
             % opens currently selected method (if it's in a separate file)
             % otherwise it opens the file containing the method
             
@@ -217,7 +220,7 @@ classdef browse < handle
             end
         end
         
-        function LOOCALpropLb(src, evt, obj)
+        function LOOCALpropLb(obj, src, evt)
             
             % find out what item user clicked on
             selected_entry = get(src, 'Value');
@@ -246,14 +249,18 @@ classdef browse < handle
             % set the new path.
             set(obj.guiHan.dirH, 'String', new_dir);
            
-            % run the 'Go' callback, fake the 'return' key being pressed.
-            evt.Key = 'return';
-            LOCALdirCb(src, evt, obj);
+            % Run the 'Go' callback, fake the 'return' key being pressed.
+            %
+            % In Matlab 2014b 'evt' will be an action class which is
+            % incompatible with what 'LOCALdirCb' expects. This is why I'm
+            % creating "evnt" here.
+            evnt.Key = 'return';
+            obj.LOCALdirCb(src, evnt);
 
         end
         
         
-        function LOCALpropCb(src, evt, obj) %#ok<MANU,INUSL>
+        function LOCALpropCb(obj, src, evt) %#ok<INUSD>
             % prints help text of currently selected property to console
             
             selected_property = get_selected_property_name(obj);
@@ -276,7 +283,7 @@ classdef browse < handle
             
         end
         
-        function LOCALlistCb(src,evt,obj) %#ok<INUSL,MANU>
+        function LOCALlistCb(obj, src, evt) %#ok<INUSD>
             obj.indx = get(obj.guiHan.classH,'UserData');
             [name, value] = get_selected_class_name(obj);
             
@@ -311,7 +318,7 @@ classdef browse < handle
             displayinfo(obj,value,name);
         end
         
-        function LOCALsearchCb(src,evt,obj)
+        function LOCALsearchCb(obj, src, evt)
             flag = 1;
             
             % check for keypresses if pushbotton didn't get pressed
@@ -544,7 +551,7 @@ classdef browse < handle
             obj.guiHan.directoryList = uicontrol('style', 'listbox', ...
                 'position', [width-list_box_width 0 list_box_width height], ...
                 'string', obj.NODIRSTRING, 'Parent', obj.guiHan.f, ...
-                'Callback', {@LOOCALpropLb obj}, ...
+                'Callback', {@obj.LOOCALpropLb}, ...
                 'TooltipString', 'Browse through directories by clicking on them.');
             
             obj.guiHan.dirsearchButtonH = uicontrol('style', 'pushbutton', ...
@@ -576,22 +583,22 @@ classdef browse < handle
 
             % context menus for listboxes
             cmenu = uicontextmenu;
-            uimenu(cmenu, 'Label', 'Print property description to console', 'Callback', {@LOCALpropCb obj});
+            uimenu(cmenu, 'Label', 'Print property description to console', 'Callback', {@obj.LOCALpropCb});
             set(obj.guiHan.propH, 'UIContextMenu', cmenu);            
             
             cmenu = uicontextmenu;
-            uimenu(cmenu, 'Label', 'Open method in editor', 'Callback', {@LOCALmethCb obj});
+            uimenu(cmenu, 'Label', 'Open method in editor', 'Callback', {@obj.LOCALmethCb});
             set(obj.guiHan.methH, 'UIContextMenu', cmenu);
 
             % assign Callbacks and other functions
-            set(obj.guiHan.f,'CloseRequestFcn',{@closefunc obj})
-            set(obj.guiHan.f,'KeyPressFcn',{@KeyPressFcn_browse obj})
-            set(obj.guiHan.classH, 'Callback',{@LOCALlistCb obj});
-            set(obj.guiHan.searchH, 'KeyPressFcn',{@LOCALsearchCb obj});
-            set(obj.guiHan.dirH,'KeyPressFcn',{@LOCALdirCb obj},'Interruptible','off');
-            set(obj.guiHan.dirsearchButtonH,'Callback',{@LOCALdirCb obj},'Interruptible','off');
-            set(obj.guiHan.browsedirButtonH,'Callback',{@LOCALbrowseCb obj},'Interruptible','off');
-            set(obj.guiHan.searchButtonH,'Callback',{@LOCALsearchCb obj});
+            set(obj.guiHan.f,'CloseRequestFcn',{@obj.closefunc})
+            set(obj.guiHan.f,'KeyPressFcn',{@obj.KeyPressFcn_browse})
+            set(obj.guiHan.classH, 'Callback',{@obj.LOCALlistCb});
+            set(obj.guiHan.searchH, 'KeyPressFcn',{@obj.LOCALsearchCb});
+            set(obj.guiHan.dirH,'KeyPressFcn',{@obj.LOCALdirCb},'Interruptible','off');
+            set(obj.guiHan.dirsearchButtonH,'Callback',{@obj.LOCALdirCb},'Interruptible','off');
+            set(obj.guiHan.browsedirButtonH,'Callback',{@obj.LOCALbrowseCb},'Interruptible','off');
+            set(obj.guiHan.searchButtonH,'Callback',{@obj.LOCALsearchCb});
             
             % update bioviewer
             setup_gui_biograph_viewer(obj);
