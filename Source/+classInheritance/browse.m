@@ -33,7 +33,7 @@ classdef browse < handle
                 % ugly "License checkout failed." error message.
                 % 
                 try % matlab >= 2011a: `[TF, errmsg] = license('checkout',feature)`
-                    [b, errormessage] = license('checkout', 'bioinformatics_toolbox'); %#ok<NASGU>
+                    [b, errormessage] = license('checkout', 'bioinformatics_toolbox'); %#ok<ASGLU>
                 catch me %#ok<NASGU> % matlab <= 2010b: `result = license('checkout',feature)`
                     b = license('checkout', 'bioinformatics_toolbox');
                 end
@@ -74,7 +74,7 @@ classdef browse < handle
             displayinfo(obj, 1, obj.liststr{1});
         end
         
-        function display(obj) %#ok<MANU>
+        function display(obj) %#ok<DISPLAY,MANU>
             display('Class Inheritance Analyzer/Browser')
         end
         
@@ -90,7 +90,7 @@ classdef browse < handle
                 switch evnt.Key
                     
                     case 'm'
-                        [name, value] = get_selected_class_name(obj);
+                        [name, value] = get_selected_class_name(obj); %#ok<ASGLU>
                         ak.create_metauml(obj.metadata{value});
                     otherwise
                         
@@ -288,7 +288,7 @@ classdef browse < handle
             
         end
         
-        function LOOCALpropLb(obj, src, evt)
+        function LOOCALpropLb(obj, src, evt) %#ok<INUSD>
             
             % find out what item user clicked on
             selected_entry = get(src, 'Value');
@@ -433,7 +433,7 @@ classdef browse < handle
     
     %% PRIVATE methods
     methods (Access = private)
-        function displayinfo(obj,value,name)
+        function displayinfo(obj,value,name) %#ok<DISPLAY>
             % takes a class name, and puts the methods and properties in respective
             % lists in the info figure.
             
@@ -653,10 +653,12 @@ classdef browse < handle
             % context menus for listboxes
             cmenu = uicontextmenu;
             uimenu(cmenu, 'Label', 'Print property description to console', 'Callback', {@obj.LOCALpropCb});
-            set(obj.guiHan.propH, 'UIContextMenu', cmenu);            
+            uimenu(cmenu, 'Label', 'Copy property name to clipboard', 'Callback', {@obj.copy_selection_to_clipboard});
+            set(obj.guiHan.propH, 'UIContextMenu', cmenu);
             
             cmenu = uicontextmenu;
             uimenu(cmenu, 'Label', 'Open method in editor', 'Callback', {@obj.LOCALmethCb});
+            uimenu(cmenu, 'Label', 'Copy method name to clipboard', 'Callback', {@obj.copy_selection_to_clipboard});
             set(obj.guiHan.methH, 'UIContextMenu', cmenu);
 
             % assign Callbacks and other functions
@@ -671,6 +673,19 @@ classdef browse < handle
             
             % update bioviewer
             setup_gui_biograph_viewer(obj);
+        end
+        
+        
+        function copy_selection_to_clipboard(obj, src, evt) %#ok<INUSD>
+            switch get(src, 'Label')
+                case 'Copy property name to clipboard'
+                    selection = get_selected_property_name(obj);
+                case 'Copy method name to clipboard'
+                    selection = get_selected_method_name(obj);
+                otherwise
+                    error('undefined');
+            end
+            clipboard('copy', selection);
         end
         
     end
