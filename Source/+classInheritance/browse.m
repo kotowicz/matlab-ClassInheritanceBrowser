@@ -651,6 +651,10 @@ classdef browse < handle
             obj.guiHan.supH = uicontrol('style','listbox','position',[485 5 150 355],'parent',infoBox);
 
             % context menus for listboxes
+            cmenu = uicontextmenu;            
+            uimenu(cmenu, 'Label', 'Copy class name to clipboard', 'Callback', {@obj.copy_selection_to_clipboard});
+            set(obj.guiHan.classH, 'UIContextMenu', cmenu);            
+            
             cmenu = uicontextmenu;
             uimenu(cmenu, 'Label', 'Print property description to console', 'Callback', {@obj.LOCALpropCb});
             uimenu(cmenu, 'Label', 'Copy property name to clipboard', 'Callback', {@obj.copy_selection_to_clipboard});
@@ -682,6 +686,8 @@ classdef browse < handle
                     selection = get_selected_property_name(obj);
                 case 'Copy method name to clipboard'
                     selection = get_selected_method_name(obj);
+                case 'Copy class name to clipboard'                    
+                    selection = get_selected_class_name(obj);
                 otherwise
                     error('undefined');
             end
